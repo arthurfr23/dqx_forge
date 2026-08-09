@@ -1,0 +1,300 @@
+{
+  "name": "dqx-forge",
+  "displayName": "DQX Forge",
+  "description": "%ext.description%",
+  "version": "0.0.1",
+  "publisher": "arthur-reis",
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.95.0"
+  },
+  "categories": [
+    "Data Science",
+    "Other"
+  ],
+  "main": "./dist/extension.js",
+  "activationEvents": [],
+  "contributes": {
+    "configuration": {
+      "title": "DQX Forge",
+      "properties": {
+        "dqxForge.profile": {
+          "type": "string",
+          "default": "",
+          "description": "%cfg.profile%"
+        },
+        "dqxForge.catalogFilter": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [],
+          "description": "%cfg.catalogFilter%"
+        },
+        "dqxForge.contractsDir": {
+          "type": "string",
+          "default": "sat_bh/dq/contracts",
+          "description": "%cfg.contractsDir%"
+        },
+        "dqxForge.dqxVersion": {
+          "type": "string",
+          "default": "0.15.0",
+          "description": "%cfg.dqxVersion%"
+        },
+        "dqxForge.volumePath": {
+          "type": "string",
+          "default": "",
+          "description": "%cfg.volumePath%"
+        },
+        "dqxForge.warehouseId": {
+          "type": "string",
+          "default": "",
+          "description": "%cfg.warehouseId%"
+        },
+        "dqxForge.schedule": {
+          "type": "string",
+          "default": "0 0 6 * * ?",
+          "description": "%cfg.schedule%"
+        },
+        "dqxForge.timezone": {
+          "type": "string",
+          "default": "America/Sao_Paulo",
+          "description": "%cfg.timezone%"
+        },
+        "dqxForge.aiRoute": {
+          "type": "string",
+          "enum": [
+            "",
+            "databricks",
+            "ide"
+          ],
+          "default": "",
+          "enumDescriptions": [
+            "Perguntar na primeira execução",
+            "Modelo servido no Databricks — os dados não saem do workspace",
+            "Modelo da IDE (Copilot/Claude) — sem custo no Databricks"
+          ],
+          "description": "%cfg.aiRoute%"
+        },
+        "dqxForge.aiEndpoint": {
+          "type": "string",
+          "default": "",
+          "description": "%cfg.aiEndpoint%"
+        },
+        "dqxForge.aiIdeModel": {
+          "type": "string",
+          "default": "",
+          "description": "%cfg.aiIdeModel%"
+        },
+        "dqxForge.language": {
+          "type": "string",
+          "enum": [
+            "",
+            "pt-br",
+            "en",
+            "es"
+          ],
+          "default": "",
+          "enumDescriptions": [
+            "Seguir o idioma do VS Code",
+            "Português (Brasil)",
+            "English",
+            "Español"
+          ],
+          "description": "%cfg.language%"
+        }
+      }
+    },
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "dqx-forge",
+          "title": "DQX Forge",
+          "icon": "resources/icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "dqx-forge": [
+        {
+          "id": "dqxForge.setup",
+          "name": "%view.setup%"
+        },
+        {
+          "id": "dqxForge.catalog",
+          "name": "%view.catalog%"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "dqxForge.selectProfile",
+        "title": "%cmd.selectProfile%",
+        "icon": "$(plug)"
+      },
+      {
+        "command": "dqxForge.refreshCatalog",
+        "title": "%cmd.refreshCatalog%",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "dqxForge.copyTableName",
+        "title": "%cmd.copyTableName%"
+      },
+      {
+        "command": "dqxForge.profileTable",
+        "title": "%cmd.profileTable%",
+        "icon": "$(beaker)"
+      },
+      {
+        "command": "dqxForge.newContract",
+        "title": "%cmd.newContract%",
+        "icon": "$(new-file)"
+      },
+      {
+        "command": "dqxForge.refreshCheckCatalog",
+        "title": "%cmd.refreshCheckCatalog%"
+      },
+      {
+        "command": "dqxForge.generateWithAi",
+        "title": "%cmd.generateWithAi%",
+        "icon": "$(sparkle)"
+      },
+      {
+        "command": "dqxForge.selectModel",
+        "title": "%cmd.selectModel%",
+        "icon": "$(sparkle)"
+      },
+      {
+        "command": "dqxForge.selectWarehouse",
+        "title": "%cmd.selectWarehouse%",
+        "icon": "$(server)"
+      },
+      {
+        "command": "dqxForge.selectVolume",
+        "title": "%cmd.selectVolume%",
+        "icon": "$(folder)"
+      },
+      {
+        "command": "dqxForge.selectContractsDir",
+        "title": "%cmd.selectContractsDir%",
+        "icon": "$(repo)"
+      },
+      {
+        "command": "dqxForge.selectSchedule",
+        "title": "%cmd.selectSchedule%",
+        "icon": "$(clock)"
+      },
+      {
+        "command": "dqxForge.selectDqxVersion",
+        "title": "%cmd.selectDqxVersion%",
+        "icon": "$(package)"
+      },
+      {
+        "command": "dqxForge.generateBundleResources",
+        "title": "%cmd.generateBundleResources%",
+        "icon": "$(rocket)"
+      },
+      {
+        "command": "dqxForge.deployBundle",
+        "title": "%cmd.deployBundle%",
+        "icon": "$(cloud-upload)"
+      },
+      {
+        "command": "dqxForge.runContractJob",
+        "title": "%cmd.runContractJob%",
+        "icon": "$(play)"
+      },
+      {
+        "command": "dqxForge.showOutput",
+        "title": "%cmd.showOutput%"
+      },
+      {
+        "command": "dqxForge.importContract",
+        "title": "%cmd.importContract%",
+        "icon": "$(cloud-download)"
+      },
+      {
+        "command": "dqxForge.selectLanguage",
+        "title": "%cmd.selectLanguage%",
+        "icon": "$(globe)"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "dqxForge.refreshCatalog",
+          "when": "view == dqxForge.catalog",
+          "group": "navigation@1"
+        },
+        {
+          "command": "dqxForge.selectProfile",
+          "when": "view == dqxForge.catalog",
+          "group": "navigation@2"
+        },
+        {
+          "command": "dqxForge.generateBundleResources",
+          "when": "view == dqxForge.setup",
+          "group": "navigation@1"
+        },
+        {
+          "command": "dqxForge.deployBundle",
+          "when": "view == dqxForge.setup",
+          "group": "navigation@2"
+        },
+        {
+          "command": "dqxForge.importContract",
+          "when": "view == dqxForge.catalog",
+          "group": "navigation@0"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "dqxForge.profileTable",
+          "when": "view == dqxForge.catalog && viewItem == dqxTable",
+          "group": "inline@1"
+        },
+        {
+          "command": "dqxForge.generateWithAi",
+          "when": "view == dqxForge.catalog && viewItem =~ /dqxTable|dqxSchema/",
+          "group": "inline@2"
+        },
+        {
+          "command": "dqxForge.newContract",
+          "when": "view == dqxForge.catalog && viewItem == dqxTable",
+          "group": "dqx@1"
+        },
+        {
+          "command": "dqxForge.copyTableName",
+          "when": "view == dqxForge.catalog && viewItem == dqxTable",
+          "group": "dqx@2"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "compile": "node esbuild.js",
+    "watch": "node esbuild.js --watch",
+    "package": "node esbuild.js --production",
+    "typecheck": "tsc --noEmit",
+    "vsix": "npm run package && vsce package --no-dependencies --out dqx-forge.vsix"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.4",
+    "@types/vscode": "^1.95.0",
+    "@vscode/vsce": "^3.9.2",
+    "esbuild": "^0.24.0",
+    "typescript": "^5.7.0"
+  },
+  "dependencies": {
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "yaml": "^2.9.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/arthurfr23/dqx_forge"
+  }
+}

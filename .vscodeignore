@@ -1,0 +1,24 @@
+# O que NÃO entra no .vsix. Sem este arquivo o empacotador cairia no
+# .gitignore, que exclui dist/ — o pacote sairia sem o código compilado.
+
+.vscode/**
+.vscode-test/**
+node_modules/**
+src/**
+webview-ui/**
+**/*.ts
+**/*.tsx
+**/*.map
+tsconfig.json
+esbuild.js
+.gitignore
+.vscodeignore
+.ruff_cache/**
+**/.DS_Store
+*.vsix
+
+# Os tasks entram pelo dist/tasks/, copiados no build — a pasta de origem
+# duplicaria os mesmos arquivos dentro do pacote.
+tasks/**
+
+# dist/, resources/ e package.nls.*.json são justamente o que precisa ir junto.
