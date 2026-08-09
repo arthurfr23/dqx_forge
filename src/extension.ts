@@ -26,7 +26,7 @@ import { importContract } from "./commands/import_command";
 import { IDIOMAS, type Idioma } from "./i18n/messages";
 import { t } from "./i18n/current";
 import { CheckCatalog } from "./domain/check_catalog";
-import { ContractStore } from "./contracts/contract_store";
+import { ContractStore, DEFAULT_CONTRACTS_DIR } from "./contracts/contract_store";
 import { ContractEditorPanel, type EditorDeps } from "./webview/panel";
 import { newContract } from "./contracts/contract_schema";
 
@@ -59,7 +59,7 @@ export function activate(context: vscode.ExtensionContext): void {
       const raiz = vscode.workspace.workspaceFolders?.[0];
       const dir = vscode.workspace
         .getConfiguration("dqxForge")
-        .get<string>("contractsDir", "sat_bh/dq/contracts");
+        .get<string>("contractsDir", DEFAULT_CONTRACTS_DIR);
       const partes = dir.split("/").filter(Boolean).slice(0, -2);
       return raiz ? vscode.Uri.joinPath(raiz.uri, ...partes) : undefined;
     },
@@ -305,7 +305,7 @@ export function activate(context: vscode.ExtensionContext): void {
 
     vscode.commands.registerCommand("dqxForge.generateBundleResources", async () => {
       try {
-        await generateBundleResources(store);
+        await generateBundleResources(store, context.extensionUri);
       } catch (err) {
         vscode.window.showErrorMessage(
           `Não foi possível gerar os recursos: ${err instanceof Error ? err.message : String(err)}`,

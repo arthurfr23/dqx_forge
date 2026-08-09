@@ -90,6 +90,43 @@ function agendamento(options: BundleOptions): Record<string, unknown> {
 }
 
 /**
+ * Bundle mínimo para quem ainda não tem um. Sem este arquivo o CLI não acha a
+ * raiz do bundle e o primeiro deploy morre num erro que não explica nada.
+ *
+ * Nasce com `dev` como target padrão e `prod` atrás de escolha explícita. O
+ * usuário corrente vem da interpolação do próprio DAB, então o arquivo não
+ * carrega o e-mail de quem gerou e continua válido para o time inteiro.
+ */
+export function generateDatabricksYml(nome: string, host: string): string {
+  const usuario = "${workspace.current_user.userName}";
+  const doc = {
+    bundle: { name: nome },
+    include: ["resources/*.yml"],
+    targets: {
+      dev: {
+        mode: "development",
+        default: true,
+        workspace: { host },
+      },
+      prod: {
+        mode: "production",
+        workspace: {
+          host,
+          root_path: `/Workspace/Users/${usuario}/.bundle/\${bundle.name}/\${bundle.target}`,
+        },
+        permissions: [{ user_name: usuario, level: "CAN_MANAGE" }],
+      },
+    },
+  };
+
+  return `# Criado pelo DQX Forge porque o projeto ainda não tinha um bundle.
+# Diferente de resources/, este arquivo é seu: edite à vontade, ele não é
+# sobrescrito nas próximas gerações.
+
+${stringifyYaml(doc, { indent: 2, lineWidth: 120 })}`;
+}
+
+/**
  * Declara o dashboard do DQX como recurso do bundle, em vez de depender do
  * `databricks labs install dqx` — assim ele é versionado e promovido dev→prod
  * junto com os jobs.
@@ -180,6 +217,22 @@ export function applyDashboardParameters(
 function partes(fullName: string): { catalog: string; schema: string; table: string } {
   const [catalog = "", schema = "", table = ""] = fullName.split(".");
   return { catalog, schema, table };
+}
+
+/**
+ * Divide o caminho configurado dos contratos: os dois últimos segmentos são a
+ * pasta dentro do bundle, e o que vier antes é a raiz do bundle no repositório
+ * — vazia quando o bundle é o próprio repositório.
+ */
+export function dividirCaminhoDosContratos(contractsDir: string): {
+  raizDoBundle: string[];
+  contratosNoBundle: string;
+} {
+  const partes = contractsDir.split("/").filter(Boolean);
+  return {
+    raizDoBundle: partes.slice(0, -2),
+    contratosNoBundle: partes.slice(-2).join("/"),
+  };
 }
 
 export function jobSlug(table: string): string {

@@ -17,6 +17,21 @@ Extensão do VS Code para construir o framework de Data Quality de um Lakehouse 
 - Unity Catalog no workspace, com um volume onde a extensão possa gravar.
 - Um SQL warehouse, se for usar o agente de IA ou o dashboard de qualidade.
 
+## O que ela escreve no seu repositório
+
+Ao rodar **Gerar recursos do bundle**, a extensão monta o projeto Databricks Asset Bundle em volta dos seus contratos:
+
+```
+databricks.yml                          criado só se não existir — depois é seu
+dq/contracts/<catalog>.<schema>.<tabela>.yml
+dq/dashboard/dqx_quality.lvdash.json    semeado do template embarcado
+resources/dq_jobs.yml                   derivado, regerado a cada vez
+resources/dq_dashboard.yml              derivado, só quando há SQL warehouse
+src/dqx_runner/apply_task.py            derivado, é o script que o job roda
+```
+
+Os arquivos marcados como derivados são reescritos a cada geração — os contratos e o `databricks.yml` não. A pasta dos contratos é configurável; os dois últimos segmentos do caminho viram a pasta dentro do bundle, e o que vier antes é a raiz do bundle. Com o default `dq/contracts`, o bundle é o próprio repositório.
+
 ## Configuração
 
 Tudo é configurado pela view **DQX Forge** na Activity Bar — cada linha abre um seletor que lê as opções reais do workspace. Nada exige editar `settings.json` à mão.
@@ -64,7 +79,9 @@ npm run vsix        # empacota dqx-forge.vsix
 
 `F5` no VS Code abre um Extension Development Host com a extensão carregada.
 
-Os scripts em `tasks/` são copiados para `dist/tasks/` no build e embarcados no `.vsix`. São o mesmo código que roda nos jobs agendados do bundle.
+Os scripts em `tasks/` são copiados para `dist/tasks/` no build e embarcados no `.vsix`. São o mesmo código que roda nos jobs agendados do bundle — o `apply_task.py` é gravado no repositório do usuário na geração dos recursos; os outros sobem direto para o workspace nas execuções interativas.
+
+`resources/dashboard/dqx_quality.lvdash.json` é o template do dashboard de qualidade, semeado no repositório do usuário quando ele ainda não tem um. Os filtros são reescritos com as tabelas do projeto na geração, então o template não precisa ser editado à mão.
 
 ## Licença
 

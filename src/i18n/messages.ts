@@ -190,6 +190,10 @@ export interface Catalogo {
   msg_execucaoIniciada: (tabela: string) => string;
   msg_precisaWarehouse: string;
   msg_precisaVolume: string;
+  msg_semHostParaBundle: string;
+  msg_bundleCriado: string;
+  msg_falhaCriarVolume: (schema: string, detalhe: string) => string;
+  msg_falhaCriarWarehouse: (detalhe: string) => string;
   msg_abrirConfig: string;
   msg_abraPasta: string;
   msg_dashboardNaoEncontrado: string;
@@ -408,6 +412,13 @@ const ptBr: Catalogo = {
     "O agente precisa de um SQL warehouse para consultar os dados. Escolha um em Configuração.",
   msg_precisaVolume:
     "Escolha o volume de artefatos antes de gerar os recursos: é nele que os jobs gravam o resultado.",
+  msg_semHostParaBundle:
+    "Este projeto ainda não tem databricks.yml e eu preciso do host do workspace para criá-lo. Escolha o perfil do Databricks.",
+  msg_bundleCriado: " O databricks.yml foi criado na raiz do projeto — revise os targets antes de publicar.",
+  msg_falhaCriarVolume: (schema, detalhe) =>
+    `Não foi possível criar o volume em ${schema}. É preciso CREATE VOLUME no schema — peça ao administrador ou escolha um volume existente. Detalhe: ${detalhe}`,
+  msg_falhaCriarWarehouse: (detalhe) =>
+    `Não foi possível criar o warehouse. Criar SQL warehouse costuma exigir permissão de administrador — peça acesso ou escolha um existente. Detalhe: ${detalhe}`,
   msg_abrirConfig: "Escolher agora",
   msg_abraPasta: "Abra a pasta do projeto para gerar os recursos do bundle.",
   msg_dashboardNaoEncontrado:
@@ -633,6 +644,13 @@ const en: Catalogo = {
     "The agent needs a SQL warehouse to query the data. Pick one under Setup.",
   msg_precisaVolume:
     "Pick the artifacts volume before generating the resources: that is where the jobs write their results.",
+  msg_semHostParaBundle:
+    "This project has no databricks.yml yet, and I need the workspace host to create one. Pick the Databricks profile.",
+  msg_bundleCriado: " databricks.yml was created at the project root — review the targets before deploying.",
+  msg_falhaCriarVolume: (schema, detalhe) =>
+    `Could not create the volume in ${schema}. It requires CREATE VOLUME on the schema — ask your administrator or pick an existing volume. Detail: ${detalhe}`,
+  msg_falhaCriarWarehouse: (detalhe) =>
+    `Could not create the warehouse. Creating a SQL warehouse usually requires admin permission — request access or pick an existing one. Detail: ${detalhe}`,
   msg_abrirConfig: "Choose now",
   msg_abraPasta: "Open the project folder to generate the bundle resources.",
   msg_dashboardNaoEncontrado:
@@ -857,6 +875,13 @@ const es: Catalogo = {
     "El agente necesita un SQL warehouse para consultar los datos. Elige uno en Configuración.",
   msg_precisaVolume:
     "Elige el volumen de artefactos antes de generar los recursos: es donde los jobs escriben su resultado.",
+  msg_semHostParaBundle:
+    "Este proyecto aún no tiene databricks.yml y necesito el host del workspace para crearlo. Elige el perfil de Databricks.",
+  msg_bundleCriado: " Se creó el databricks.yml en la raíz del proyecto — revisa los targets antes de publicar.",
+  msg_falhaCriarVolume: (schema, detalhe) =>
+    `No se pudo crear el volumen en ${schema}. Hace falta CREATE VOLUME en el schema — pídelo al administrador o elige un volumen existente. Detalle: ${detalhe}`,
+  msg_falhaCriarWarehouse: (detalhe) =>
+    `No se pudo crear el warehouse. Crear un SQL warehouse suele requerir permiso de administrador — solicita acceso o elige uno existente. Detalle: ${detalhe}`,
   msg_abrirConfig: "Elegir ahora",
   msg_abraPasta: "Abre la carpeta del proyecto para generar los recursos del bundle.",
   msg_dashboardNaoEncontrado:

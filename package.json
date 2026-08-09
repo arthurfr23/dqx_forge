@@ -33,7 +33,7 @@
         },
         "dqxForge.contractsDir": {
           "type": "string",
-          "default": "sat_bh/dq/contracts",
+          "default": "dq/contracts",
           "description": "%cfg.contractsDir%"
         },
         "dqxForge.dqxVersion": {

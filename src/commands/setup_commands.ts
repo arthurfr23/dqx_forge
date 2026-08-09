@@ -157,21 +157,34 @@ async function criarWarehouse(auth: DatabricksAuth): Promise<string | undefined>
   return await vscode.window.withProgress(
     { location: vscode.ProgressLocation.Notification, title: "Criando o warehouse…" },
     async () => {
-      const criado = await auth.request<{ id: string }>("/api/2.0/sql/warehouses", {
-        method: "POST",
-        body: {
-          name: nome,
-          cluster_size: "2X-Small",
-          max_num_clusters: 1,
-          auto_stop_mins: 10,
-          enable_serverless_compute: true,
-          warehouse_type: "PRO",
-        },
-      });
-      vscode.window.showInformationMessage(`Warehouse "${nome}" criado.`);
-      return criado.id;
+      try {
+        const criado = await auth.request<{ id: string }>("/api/2.0/sql/warehouses", {
+          method: "POST",
+          body: {
+            name: nome,
+            cluster_size: "2X-Small",
+            max_num_clusters: 1,
+            auto_stop_mins: 10,
+            enable_serverless_compute: true,
+            warehouse_type: "PRO",
+          },
+        });
+        vscode.window.showInformationMessage(`Warehouse "${nome}" criado.`);
+        return criado.id;
+      } catch (err) {
+        // Criar compute costuma ser privilégio de admin: o erro cru da API não
+        // deixa claro que o caminho é pedir acesso ou escolher um já existente.
+        vscode.window.showErrorMessage(t().msg_falhaCriarWarehouse(detalhe(err)));
+        return undefined;
+      }
     },
   );
+}
+
+/** Só a primeira linha interessa: o resto do corpo da API é ruído na notificação. */
+function detalhe(err: unknown): string {
+  const texto = err instanceof Error ? err.message : String(err);
+  return texto.split("\n")[0].slice(0, 200);
 }
 
 /**
@@ -290,15 +303,24 @@ export async function selecionarVolume(
   let nomeVolume = escolhido.label;
   if (escolhido.criar) {
     nomeVolume = "vol_dqx_artifacts";
-    await auth.request("/api/2.1/unity-catalog/volumes", {
-      method: "POST",
-      body: {
-        catalog_name: catalogoEscolhido,
-        schema_name: schemaEscolhido,
-        name: nomeVolume,
-        volume_type: "MANAGED",
-      },
-    });
+    try {
+      await auth.request("/api/2.1/unity-catalog/volumes", {
+        method: "POST",
+        body: {
+          catalog_name: catalogoEscolhido,
+          schema_name: schemaEscolhido,
+          name: nomeVolume,
+          volume_type: "MANAGED",
+        },
+      });
+    } catch (err) {
+      // CREATE VOLUME num schema alheio é o caso comum fora do workspace de
+      // quem desenvolve — a mensagem precisa dizer o que pedir ao administrador.
+      vscode.window.showErrorMessage(
+        t().msg_falhaCriarVolume(`${catalogoEscolhido}.${schemaEscolhido}`, detalhe(err)),
+      );
+      return undefined;
+    }
   }
 
   const caminho = `/Volumes/${catalogoEscolhido}/${schemaEscolhido}/${nomeVolume}`;

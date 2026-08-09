@@ -12,6 +12,12 @@ export interface StoredContract {
 }
 
 /**
+ * Os dois últimos segmentos viram o caminho dos contratos dentro do bundle, e o
+ * que vier antes é a raiz do bundle — aqui, a própria raiz do repositório.
+ */
+export const DEFAULT_CONTRACTS_DIR = "dq/contracts";
+
+/**
  * Os contratos são arquivos do repositório — essa é a premissa do modelo
  * GitOps. Tudo aqui trabalha sobre o workspace aberto no VS Code.
  */
@@ -38,7 +44,7 @@ export class ContractStore {
     }
     const relative = vscode.workspace
       .getConfiguration("dqxForge")
-      .get<string>("contractsDir", "sat_bh/dq/contracts");
+      .get<string>("contractsDir", DEFAULT_CONTRACTS_DIR);
     return vscode.Uri.joinPath(root.uri, ...relative.split("/").filter(Boolean));
   }
 
@@ -127,7 +133,7 @@ export class ContractStore {
     }
     const relative = vscode.workspace
       .getConfiguration("dqxForge")
-      .get<string>("contractsDir", "sat_bh/dq/contracts");
+      .get<string>("contractsDir", DEFAULT_CONTRACTS_DIR);
 
     this.watcher = vscode.workspace.createFileSystemWatcher(
       new vscode.RelativePattern(root, `${relative}/*.{yml,yaml}`),
