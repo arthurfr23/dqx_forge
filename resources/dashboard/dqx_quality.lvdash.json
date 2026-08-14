@@ -635,7 +635,7 @@
       "queryLines": [
         "SET use_cached_result = false;\n",
         "SELECT\n",
-        "  to_date(IDENTIFIER(:date_col_name)) as data_date_col,,\n",
+        "  to_date(IDENTIFIER(:date_col_name)) as data_date_col,\n",
         "  err.name AS check_name,\n",
         "  'error' AS check_status,\n",
         "  COUNT(*) AS count\n",

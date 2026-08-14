@@ -90,7 +90,7 @@ export class JobRunner {
             environment_key: "dqx_env",
             spec: {
               client: this.config.environmentVersion ?? "3",
-              dependencies: [`databricks-labs-dqx==${this.config.dqxVersion}`],
+              dependencies: [this.dependenciaDqx(options.task)],
             },
           },
         ],
@@ -116,7 +116,11 @@ export class JobRunner {
     const succeeded = terminationCode === "SUCCESS" || resultState === "SUCCESS";
 
     if (!succeeded) {
+      // A mensagem do job é sempre a mesma ("see run output for details"). A
+      // causa real está na saída do task — buscá-la aqui evita mandar o usuário
+      // para a UI do Databricks só para descobrir o que falhou.
       const detail =
+        (await this.erroDoTask(state.tasks?.[0]?.run_id)) ??
         state.status?.termination_details?.message ??
         state.state?.state_message ??
         `estado ${resultState ?? "desconhecido"}`;
@@ -126,6 +130,32 @@ export class JobRunner {
     report("Lendo o resultado…");
     const payload = await this.readVolumeJson<T>(options.outputPath);
     return { runId, payload, durationMs: Date.now() - startedAt };
+  }
+
+  /**
+   * A conversão de ODCS depende do datacontract-cli, que só vem no extra
+   * [datacontract] do DQX. Instalar em todo task encareceria o cold start dos
+   * outros sem necessidade, então o extra é resolvido por task.
+   */
+  private dependenciaDqx(task: TaskName): string {
+    const extra = task === "contract_import_task" ? "[datacontract]" : "";
+    return `databricks-labs-dqx${extra}==${this.config.dqxVersion}`;
+  }
+
+  /** Primeira linha do erro do task, que é onde a causa real aparece. */
+  private async erroDoTask(taskRunId?: number): Promise<string | undefined> {
+    if (taskRunId === undefined) {
+      return undefined;
+    }
+    try {
+      const saida = await this.auth.request<{ error?: string }>("/api/2.2/jobs/runs/get-output", {
+        query: { run_id: taskRunId },
+      });
+      const linha = saida.error?.trim().split("\n")[0];
+      return linha ? linha.slice(0, 400) : undefined;
+    } catch {
+      return undefined;
+    }
   }
 
   /** Lê o marcador que o task imprime no stdout — resumo barato, sem tocar o Volume. */
