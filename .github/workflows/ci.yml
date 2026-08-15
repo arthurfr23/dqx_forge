@@ -1,0 +1,51 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Typecheck and package
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Build
+        run: npm run compile
+
+      # Empacotar no CI pega o que o typecheck não pega: arquivo que o .vsix
+      # precisa e ficou de fora, ou entrou sem querer.
+      - name: Package
+        run: npm run vsix
+
+      - name: Check packaged contents
+        run: |
+          npx --yes @vscode/vsce ls --no-dependencies > packaged.txt
+          cat packaged.txt
+          for required in dist/extension.js dist/webview.js dist/tasks/apply_task.py \
+                          resources/icon.png resources/dashboard/dqx_quality.lvdash.json; do
+            grep -qx "$required" packaged.txt || { echo "missing from package: $required"; exit 1; }
+          done
+          ! grep -qE '^(src/|webview-ui/|tasks/)' packaged.txt || { echo "source files leaked into package"; exit 1; }
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dqx-forge-vsix
+          path: dqx-forge.vsix
+          retention-days: 14

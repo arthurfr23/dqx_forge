@@ -5,12 +5,28 @@
   "version": "0.0.1",
   "publisher": "arthur-reis",
   "license": "MIT",
+  "icon": "resources/icon.png",
+  "galleryBanner": {
+    "color": "#151823",
+    "theme": "dark"
+  },
   "engines": {
     "vscode": "^1.95.0"
   },
   "categories": [
     "Data Science",
+    "Testing",
     "Other"
+  ],
+  "keywords": [
+    "databricks",
+    "data quality",
+    "dqx",
+    "unity catalog",
+    "lakehouse",
+    "delta lake",
+    "asset bundles",
+    "data contracts"
   ],
   "main": "./dist/extension.js",
   "activationEvents": [],
@@ -295,6 +311,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/arthurfr23/dqx_forge"
-  }
+    "url": "https://github.com/arthurfr23/dqx_forge.git"
+  },
+  "bugs": {
+    "url": "https://github.com/arthurfr23/dqx_forge/issues"
+  },
+  "homepage": "https://github.com/arthurfr23/dqx_forge#readme"
 }

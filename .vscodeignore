@@ -22,3 +22,10 @@ esbuild.js
 tasks/**
 
 # dist/, resources/ e package.nls.*.json são justamente o que precisa ir junto.
+
+# Documentação e automação do repositório não pertencem ao pacote.
+.github/**
+.editorconfig
+.gitattributes
+CONTRIBUTING.md
+SECURITY.md

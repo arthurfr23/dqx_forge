@@ -1,0 +1,67 @@
+name: Bug report
+description: Something in DQX Forge does not work as expected
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Before filling this in: the output of **DQX Forge: Show log** usually contains
+        the cause. Please redact tokens and any real data rows — dry-run output
+        includes rows from your tables.
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened
+      description: What you did, what you expected, and what happened instead.
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Log output
+      description: Relevant lines from "DQX Forge: Show log", redacted.
+      render: shell
+
+  - type: input
+    id: vscode
+    attributes:
+      label: VS Code version
+      placeholder: "1.95.0"
+    validations:
+      required: true
+
+  - type: input
+    id: cli
+    attributes:
+      label: Databricks CLI version
+      description: Output of `databricks --version`
+      placeholder: "Databricks CLI v0.299.0"
+    validations:
+      required: true
+
+  - type: input
+    id: dqx
+    attributes:
+      label: DQX version
+      description: The value under Setup → DQX version
+      placeholder: "0.15.0"
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Where it happens
+      options:
+        - Unity Catalog browser
+        - Profiling
+        - Contract editor
+        - Dry run
+        - AI agent
+        - Import
+        - Bundle generation or deploy
+        - Scheduled job
+        - Dashboard
+        - Other
+    validations:
+      required: true

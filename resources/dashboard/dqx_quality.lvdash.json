@@ -122,7 +122,7 @@
               "dataType": "STRING",
               "values": [
                 {
-                  "value": "my_table"
+                  "value": "my_table_quarantine"
                 }
               ]
             }
@@ -273,7 +273,7 @@
               "dataType": "STRING",
               "values": [
                 {
-                  "value": "my_table"
+                  "value": "my_table_quarantine"
                 }
               ]
             }
@@ -406,7 +406,7 @@
               "dataType": "STRING",
               "values": [
                 {
-                  "value": "my_table"
+                  "value": "my_table_quarantine"
                 }
               ]
             }
@@ -561,7 +561,7 @@
               "dataType": "STRING",
               "values": [
                 {
-                  "value": "my_table"
+                  "value": "my_table_quarantine"
                 }
               ]
             }
@@ -676,7 +676,7 @@
               "dataType": "STRING",
               "values": [
                 {
-                  "value": "my_table"
+                  "value": "my_table_quarantine"
                 }
               ]
             }
@@ -824,7 +824,7 @@
               "dataType": "STRING",
               "values": [
                 {
-                  "value": "my_table"
+                  "value": "my_table_quarantine"
                 }
               ]
             }
@@ -942,7 +942,7 @@
               "dataType": "STRING",
               "values": [
                 {
-                  "value": "my_table"
+                  "value": "my_table_quarantine"
                 }
               ]
             }
@@ -1256,7 +1256,7 @@
               "dataType": "STRING",
               "values": [
                 {
-                  "value": "my_table"
+                  "value": "my_table_quarantine"
                 }
               ]
             }
@@ -1378,7 +1378,7 @@
               "dataType": "STRING",
               "values": [
                 {
-                  "value": "my_table"
+                  "value": "my_table_quarantine"
                 }
               ]
             }
@@ -1536,7 +1536,7 @@
               "dataType": "STRING",
               "values": [
                 {
-                  "value": "my_table"
+                  "value": "my_table_quarantine"
                 }
               ]
             }

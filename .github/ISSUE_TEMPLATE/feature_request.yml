@@ -1,0 +1,23 @@
+name: Feature request
+description: Suggest something DQX Forge should do
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: The problem
+      description: What are you trying to accomplish, and where does the extension get in the way today?
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: What you have in mind
+      description: Optional. A rough idea is fine — the problem matters more than the solution.
+
+  - type: textarea
+    id: workaround
+    attributes:
+      label: How you handle it today
+      description: Manual steps, another tool, or nothing at all.
