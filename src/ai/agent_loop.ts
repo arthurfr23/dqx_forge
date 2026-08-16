@@ -102,24 +102,6 @@ export async function runAgent(options: AgentOptions): Promise<AgentResult> {
       toolCalls: response.toolCalls,
     });
 
-    // Investigar é bom até virar prejuízo: sem aviso, o modelo gasta todas as
-    // voltas confirmando hipóteses e o loop termina sem nenhuma regra, jogando
-    // fora tudo que ele descobriu. O aviso converte a investigação em entrega.
-    const restantes = MAX_ITERACOES - iteracoes;
-    if (restantes <= VOLTAS_DE_FECHAMENTO && !avisouDoFim && !context.propostas.length) {
-      avisouDoFim = true;
-      diagnostico.push(`volta ${iteracoes}: avisando que restam ${restantes} voltas`);
-      options.onProgress?.(t().ia_passoFechando);
-      messages.push({
-        role: "user",
-        content:
-          `Restam ${restantes} voltas. Pare de investigar e chame propose_checks agora, ` +
-          "com as regras que você já consegue justificar pelo que observou. " +
-          "É melhor entregar poucas regras bem fundamentadas do que nenhuma. " +
-          "Se alguma hipótese ficou sem confirmação, use criticality \"warn\".",
-      });
-    }
-
     for (const call of response.toolCalls) {
       // Argumento ilegível costuma ser resposta truncada: devolver o motivo faz
       // o modelo reenviar em partes menores, em vez de encerrar sem propor nada.
@@ -138,6 +120,24 @@ export async function runAgent(options: AgentOptions): Promise<AgentResult> {
       options.onProgress?.(descreverChamada(call.name, call.arguments));
       const saida = await runTool(call.name, call.arguments, context);
       messages.push({ role: "tool", content: saida, toolCallId: call.id });
+    }
+
+    // Só depois dos resultados: a API exige que a mensagem com tool_use seja
+    // seguida imediatamente pelos tool_result correspondentes. Inserir o aviso
+    // no meio quebra o par e a chamada volta 400.
+    const restantes = MAX_ITERACOES - iteracoes;
+    if (restantes <= VOLTAS_DE_FECHAMENTO && !avisouDoFim && !context.propostas.length) {
+      avisouDoFim = true;
+      diagnostico.push(`volta ${iteracoes}: avisando que restam ${restantes} voltas`);
+      options.onProgress?.(t().ia_passoFechando);
+      messages.push({
+        role: "user",
+        content:
+          `Restam ${restantes} voltas. Pare de investigar e chame propose_checks agora, ` +
+          "com as regras que você já consegue justificar pelo que observou. " +
+          "É melhor entregar poucas regras bem fundamentadas do que nenhuma. " +
+          "Se alguma hipótese ficou sem confirmação, use criticality \"warn\".",
+      });
     }
 
     // Depois de registrar as propostas o trabalho acabou; mais uma volta só

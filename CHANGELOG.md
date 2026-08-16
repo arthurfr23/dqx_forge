@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.4] — 2026-08-16
+
+### Fixed
+
+- O aviso de fechamento introduzido na 0.0.3 era inserido entre a mensagem do
+  assistente e os resultados das ferramentas, quebrando a exigência da API de
+  que cada `tool_use` seja seguido imediatamente pelo `tool_result`
+  correspondente. A chamada voltava 400 e a geração terminava sem regras. O
+  aviso passa a ser acrescentado depois dos resultados.
+
 ## [0.0.3] — 2026-08-16
 
 ### Fixed
@@ -82,7 +92,8 @@ First public release.
   as soon as the extension reads them; dry-run payloads contain real table rows and
   are not left behind.
 
-[Unreleased]: https://github.com/arthurfr23/dqx_forge/compare/v0.0.3...HEAD
+[Unreleased]: https://github.com/arthurfr23/dqx_forge/compare/v0.0.4...HEAD
+[0.0.4]: https://github.com/arthurfr23/dqx_forge/releases/tag/v0.0.4
 [0.0.3]: https://github.com/arthurfr23/dqx_forge/releases/tag/v0.0.3
 [0.0.2]: https://github.com/arthurfr23/dqx_forge/releases/tag/v0.0.2
 [0.0.1]: https://github.com/arthurfr23/dqx_forge/releases/tag/v0.0.1
