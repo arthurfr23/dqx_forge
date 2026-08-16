@@ -166,7 +166,7 @@ export function validateContractText(
       if (!known.has(name)) {
         issues.push({
           severity: "warning",
-          message: `"${fnName}" não recebe o argumento "${name}".`,
+          message: t().ctr_argumentoDesconhecido(fnName, name),
           offset: range,
           checkIndex: index,
         });

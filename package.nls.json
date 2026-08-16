@@ -32,5 +32,9 @@
   "cfg.aiRoute": "Where the AI runs. Use 'DQX Forge: Choose AI model' to set it.",
   "cfg.aiEndpoint": "Serving endpoint used on the Databricks route. Set by the model picker.",
   "cfg.aiIdeModel": "Identifier of the IDE model used when the route is 'ide'.",
-  "cfg.language": "DQX Forge interface language."
+  "cfg.language": "DQX Forge interface language.",
+  "enum.aiRoute.ask": "Ask on first run",
+  "enum.aiRoute.databricks": "Model served on Databricks — no data leaves the workspace",
+  "enum.aiRoute.ide": "IDE model (Copilot/Claude) — no Databricks cost",
+  "enum.language.auto": "Follow the VS Code language"
 }

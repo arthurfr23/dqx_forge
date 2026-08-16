@@ -46,7 +46,7 @@ export async function profileTable(
   const result = await vscode.window.withProgress(
     {
       location: vscode.ProgressLocation.Notification,
-      title: `Perfilando ${fullName}`,
+      title: t().msg_perfilando(fullName),
       cancellable: true,
     },
     async (progress, token) => {

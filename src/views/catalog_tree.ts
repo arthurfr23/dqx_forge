@@ -97,7 +97,7 @@ export class CatalogTreeProvider implements vscode.TreeDataProvider<Node> {
           const schemas = await this.client.listSchemas(node.name);
           return schemas.length
             ? schemas.map((s) => ({ kind: "schema", catalog: s.catalogName, name: s.name, comment: s.comment }))
-            : [{ kind: "message", label: "Nenhum schema acessível" }];
+            : [{ kind: "message", label: t().arvore_semSchema }];
         }
         case "schema": {
           const tables = await this.client.listTables(node.catalog, node.name);
@@ -109,7 +109,7 @@ export class CatalogTreeProvider implements vscode.TreeDataProvider<Node> {
           const columns = await this.client.getColumns(node.table.fullName);
           return columns.length
             ? columns.map((column) => ({ kind: "column", column }))
-            : [{ kind: "message", label: "Nenhuma coluna" }];
+            : [{ kind: "message", label: t().arvore_semColuna }];
         }
         default:
           return [];

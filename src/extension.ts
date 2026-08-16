@@ -91,7 +91,7 @@ export function activate(context: vscode.ExtensionContext): void {
   const renderStatusBar = () => {
     const profile = auth.profile || "DEFAULT";
     statusBar.text = `$(database) DQX: ${profile}`;
-    statusBar.tooltip = `Perfil do Databricks usado pelo DQX Forge — clique para trocar`;
+    statusBar.tooltip = t().status_tooltip;
     statusBar.show();
   };
   renderStatusBar();
@@ -251,7 +251,7 @@ export function activate(context: vscode.ExtensionContext): void {
       const escolha = await selecionarModelo(servingClient);
       if (escolha) {
         setupTree.refresh();
-        vscode.window.showInformationMessage(`Modelo de IA: ${escolha.rotulo}.`);
+        vscode.window.showInformationMessage(t().msg_modeloDefinido(escolha.rotulo));
       }
     }),
 

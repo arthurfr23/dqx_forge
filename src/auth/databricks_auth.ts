@@ -62,12 +62,10 @@ export class DatabricksAuth {
     const target = this.profileName || "DEFAULT";
     const found = profiles.find((p) => p.name === target);
     if (!found) {
-      throw new DatabricksAuthError(
-        `Perfil "${target}" não encontrado em ~/.databrickscfg. Configure-o na extensão oficial da Databricks ou rode "databricks auth login".`,
-      );
+      throw new DatabricksAuthError(t().auth_perfilNaoEncontrado(target));
     }
     if (!found.host) {
-      throw new DatabricksAuthError(`Perfil "${target}" não define um host.`);
+      throw new DatabricksAuthError(t().auth_perfilSemHost(target));
     }
     return found;
   }

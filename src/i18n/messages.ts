@@ -355,6 +355,14 @@ export interface Catalogo {
   ia_passoRegistrando: string;
   ia_passoGenerico: (nome: string) => string;
   dash_semContrato: string;
+  status_tooltip: string;
+  auth_perfilNaoEncontrado: (perfil: string) => string;
+  auth_perfilSemHost: (perfil: string) => string;
+  ctr_argumentoDesconhecido: (funcao: string, argumento: string) => string;
+  msg_perfilando: (tabela: string) => string;
+  msg_modeloDefinido: (rotulo: string) => string;
+  arvore_semSchema: string;
+  arvore_semColuna: string;
 }
 
 const ptBr: Catalogo = {
@@ -717,6 +725,16 @@ const ptBr: Catalogo = {
   ia_passoRegistrando: "Registrando as regras propostas…",
   ia_passoGenerico: (nome) => `Executando ${nome}…`,
   dash_semContrato: "Nenhum contrato disponível para configurar o dashboard.",
+  status_tooltip: "Perfil do Databricks usado pelo DQX Forge — clique para trocar",
+  auth_perfilNaoEncontrado: (perfil) =>
+    `Perfil "${perfil}" não encontrado em ~/.databrickscfg. Configure-o na extensão oficial da Databricks ou rode "databricks auth login".`,
+  auth_perfilSemHost: (perfil) => `Perfil "${perfil}" não define um host.`,
+  ctr_argumentoDesconhecido: (funcao, argumento) =>
+    `"${funcao}" não recebe o argumento "${argumento}".`,
+  msg_perfilando: (tabela) => `Perfilando ${tabela}`,
+  msg_modeloDefinido: (rotulo) => `Modelo de IA: ${rotulo}.`,
+  arvore_semSchema: "Nenhum schema acessível",
+  arvore_semColuna: "Nenhuma coluna",
 };
 
 const en: Catalogo = {
@@ -1076,6 +1094,16 @@ const en: Catalogo = {
   ia_passoRegistrando: "Recording the proposed rules…",
   ia_passoGenerico: (nome) => `Running ${nome}…`,
   dash_semContrato: "No contract available to configure the dashboard.",
+  status_tooltip: "Databricks profile used by DQX Forge — click to switch",
+  auth_perfilNaoEncontrado: (perfil) =>
+    `Profile "${perfil}" not found in ~/.databrickscfg. Configure it in the official Databricks extension or run "databricks auth login".`,
+  auth_perfilSemHost: (perfil) => `Profile "${perfil}" does not define a host.`,
+  ctr_argumentoDesconhecido: (funcao, argumento) =>
+    `"${funcao}" does not take the argument "${argumento}".`,
+  msg_perfilando: (tabela) => `Profiling ${tabela}`,
+  msg_modeloDefinido: (rotulo) => `AI model: ${rotulo}.`,
+  arvore_semSchema: "No accessible schema",
+  arvore_semColuna: "No column",
 };
 
 const es: Catalogo = {
@@ -1439,6 +1467,16 @@ const es: Catalogo = {
   ia_passoRegistrando: "Registrando las reglas propuestas…",
   ia_passoGenerico: (nome) => `Ejecutando ${nome}…`,
   dash_semContrato: "Ningún contrato disponible para configurar el dashboard.",
+  status_tooltip: "Perfil de Databricks usado por DQX Forge — haz clic para cambiar",
+  auth_perfilNaoEncontrado: (perfil) =>
+    `Perfil "${perfil}" no encontrado en ~/.databrickscfg. Configúralo en la extensión oficial de Databricks o ejecuta "databricks auth login".`,
+  auth_perfilSemHost: (perfil) => `El perfil "${perfil}" no define un host.`,
+  ctr_argumentoDesconhecido: (funcao, argumento) =>
+    `"${funcao}" no acepta el argumento "${argumento}".`,
+  msg_perfilando: (tabela) => `Perfilando ${tabela}`,
+  msg_modeloDefinido: (rotulo) => `Modelo de IA: ${rotulo}.`,
+  arvore_semSchema: "Ningún schema accesible",
+  arvore_semColuna: "Ninguna columna",
 };
 
 const CATALOGOS: Record<Idioma, Catalogo> = { "pt-br": ptBr, en, es };

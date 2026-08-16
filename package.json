@@ -86,9 +86,9 @@
           ],
           "default": "",
           "enumDescriptions": [
-            "Perguntar na primeira execução",
-            "Modelo servido no Databricks — os dados não saem do workspace",
-            "Modelo da IDE (Copilot/Claude) — sem custo no Databricks"
+            "%enum.aiRoute.ask%",
+            "%enum.aiRoute.databricks%",
+            "%enum.aiRoute.ide%"
           ],
           "description": "%cfg.aiRoute%"
         },
@@ -112,7 +112,7 @@
           ],
           "default": "",
           "enumDescriptions": [
-            "Seguir o idioma do VS Code",
+            "%enum.language.auto%",
             "Português (Brasil)",
             "English",
             "Español"
