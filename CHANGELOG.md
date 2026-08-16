@@ -7,6 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.3] — 2026-08-16
+
+### Fixed
+
+- O agente podia investigar até esgotar o orçamento de voltas e terminar sem
+  propor nenhuma regra, jogando fora tudo que havia descoberto. Nas últimas
+  voltas ele agora recebe um aviso para fechar com o que já consegue
+  justificar, marcando como `warn` o que ficou sem confirmação.
+- A validação de somente-leitura do `run_sql` casava a palavra solta e barrava
+  consulta legítima: `replace(...)` é função de string, e uma coluna chamada
+  `update_ts` também derrubava a query. Passa a reconhecer a escrita pela frase
+  inteira, sem afrouxar o bloqueio — a instrução já precisa começar com
+  SELECT/WITH e continuar sem `;`.
+
+### Changed
+
+- Orçamento do agente de 14 para 18 voltas, com as 3 últimas reservadas ao
+  fechamento.
+
 ## [0.0.2] — 2026-08-16
 
 ### Fixed
@@ -63,6 +82,7 @@ First public release.
   as soon as the extension reads them; dry-run payloads contain real table rows and
   are not left behind.
 
-[Unreleased]: https://github.com/arthurfr23/dqx_forge/compare/v0.0.2...HEAD
+[Unreleased]: https://github.com/arthurfr23/dqx_forge/compare/v0.0.3...HEAD
+[0.0.3]: https://github.com/arthurfr23/dqx_forge/releases/tag/v0.0.3
 [0.0.2]: https://github.com/arthurfr23/dqx_forge/releases/tag/v0.0.2
 [0.0.1]: https://github.com/arthurfr23/dqx_forge/releases/tag/v0.0.1

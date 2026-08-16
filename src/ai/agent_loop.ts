@@ -6,7 +6,9 @@ import type { Dimension } from "../domain/layer_profiles";
 import { AGENT_TOOLS, runTool, type ToolContext } from "./tools";
 import type { LlmMessage, LlmProvider } from "./llm_provider";
 
-const MAX_ITERACOES = 14;
+const MAX_ITERACOES = 18;
+/** Voltas reservadas no fim para o modelo fechar com propose_checks. */
+const VOLTAS_DE_FECHAMENTO = 3;
 
 export interface AgentResult {
   propostas: Array<{ check: DqxCheck; justificativa: string }>;
@@ -50,6 +52,7 @@ export async function runAgent(options: AgentOptions): Promise<AgentResult> {
 
   let resumo = "";
   let iteracoes = 0;
+  let avisouDoFim = false;
   const diagnostico: string[] = [
     `provider: ${options.provider.descricao} · ferramentas enviadas: ${AGENT_TOOLS.length}`,
   ];
@@ -98,6 +101,24 @@ export async function runAgent(options: AgentOptions): Promise<AgentResult> {
       content: response.text,
       toolCalls: response.toolCalls,
     });
+
+    // Investigar é bom até virar prejuízo: sem aviso, o modelo gasta todas as
+    // voltas confirmando hipóteses e o loop termina sem nenhuma regra, jogando
+    // fora tudo que ele descobriu. O aviso converte a investigação em entrega.
+    const restantes = MAX_ITERACOES - iteracoes;
+    if (restantes <= VOLTAS_DE_FECHAMENTO && !avisouDoFim && !context.propostas.length) {
+      avisouDoFim = true;
+      diagnostico.push(`volta ${iteracoes}: avisando que restam ${restantes} voltas`);
+      options.onProgress?.(t().ia_passoFechando);
+      messages.push({
+        role: "user",
+        content:
+          `Restam ${restantes} voltas. Pare de investigar e chame propose_checks agora, ` +
+          "com as regras que você já consegue justificar pelo que observou. " +
+          "É melhor entregar poucas regras bem fundamentadas do que nenhuma. " +
+          "Se alguma hipótese ficou sem confirmação, use criticality \"warn\".",
+      });
+    }
 
     for (const call of response.toolCalls) {
       // Argumento ilegível costuma ser resposta truncada: devolver o motivo faz

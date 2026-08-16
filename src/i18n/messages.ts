@@ -353,6 +353,7 @@ export interface Catalogo {
   ia_passoAnalisando: (coluna: string, tabela: string) => string;
   ia_passoSql: string;
   ia_passoRegistrando: string;
+  ia_passoFechando: string;
   ia_passoGenerico: (nome: string) => string;
   dash_semContrato: string;
   status_tooltip: string;
@@ -723,6 +724,7 @@ const ptBr: Catalogo = {
   ia_passoAnalisando: (coluna, tabela) => `Analisando a coluna ${coluna} de ${tabela}…`,
   ia_passoSql: "Confirmando uma hipótese com SQL…",
   ia_passoRegistrando: "Registrando as regras propostas…",
+  ia_passoFechando: "Pedindo ao modelo que feche com as regras que já tem…",
   ia_passoGenerico: (nome) => `Executando ${nome}…`,
   dash_semContrato: "Nenhum contrato disponível para configurar o dashboard.",
   status_tooltip: "Perfil do Databricks usado pelo DQX Forge — clique para trocar",
@@ -1092,6 +1094,7 @@ const en: Catalogo = {
   ia_passoAnalisando: (coluna, tabela) => `Analysing column ${coluna} of ${tabela}…`,
   ia_passoSql: "Confirming a hypothesis with SQL…",
   ia_passoRegistrando: "Recording the proposed rules…",
+  ia_passoFechando: "Asking the model to wrap up with the rules it already has…",
   ia_passoGenerico: (nome) => `Running ${nome}…`,
   dash_semContrato: "No contract available to configure the dashboard.",
   status_tooltip: "Databricks profile used by DQX Forge — click to switch",
@@ -1465,6 +1468,7 @@ const es: Catalogo = {
   ia_passoAnalisando: (coluna, tabela) => `Analizando la columna ${coluna} de ${tabela}…`,
   ia_passoSql: "Confirmando una hipótesis con SQL…",
   ia_passoRegistrando: "Registrando las reglas propuestas…",
+  ia_passoFechando: "Pidiendo al modelo que cierre con las reglas que ya tiene…",
   ia_passoGenerico: (nome) => `Ejecutando ${nome}…`,
   dash_semContrato: "Ningún contrato disponible para configurar el dashboard.",
   status_tooltip: "Perfil de Databricks usado por DQX Forge — haz clic para cambiar",

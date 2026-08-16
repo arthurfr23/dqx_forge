@@ -222,8 +222,12 @@ function assertReadOnly(query: string): void {
   if (!/^(SELECT|WITH|DESCRIBE|SHOW|EXPLAIN)\b/.test(normalizado)) {
     throw new Error("Só consultas de leitura são permitidas (SELECT, WITH, DESCRIBE, SHOW).");
   }
+  // Casar a palavra solta barrava consulta legítima: `replace(...)` é função de
+  // string, e com dados mal formatados é justamente o que se usa para testar
+  // formato. Como a instrução já precisa começar com SELECT/WITH e não pode ter
+  // ';', o que resta é reconhecer a escrita pela frase inteira.
   const proibidos =
-    /\b(INSERT|UPDATE|DELETE|MERGE|DROP|TRUNCATE|ALTER|CREATE|REPLACE|GRANT|REVOKE|COPY|VACUUM|RESTORE)\b/;
+    /\b(INSERT\s+(INTO|OVERWRITE)|DELETE\s+FROM|UPDATE\s+\S+\s+SET|MERGE\s+INTO|DROP\s+(TABLE|VIEW|SCHEMA|DATABASE|CATALOG|FUNCTION|VOLUME)|TRUNCATE\s+TABLE|ALTER\s+(TABLE|VIEW|SCHEMA|DATABASE|CATALOG)|CREATE\s+(OR\s+REPLACE\s+)?(TABLE|VIEW|FUNCTION|SCHEMA|DATABASE|CATALOG|VOLUME)|GRANT\s|REVOKE\s|COPY\s+INTO|VACUUM\s|RESTORE\s+TABLE)\b/;
   if (proibidos.test(normalizado)) {
     throw new Error("A consulta contém um comando de escrita, que não é permitido aqui.");
   }

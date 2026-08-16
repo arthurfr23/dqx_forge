@@ -2,7 +2,7 @@
   "name": "dqx-forge",
   "displayName": "DQX Forge",
   "description": "Build your Databricks Lakehouse data quality framework with DQX — profiling, versioned contracts, dry runs, scheduled jobs and a quality dashboard.",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "publisher": "arthurfr23",
   "license": "MIT",
   "icon": "resources/icon.png",
