@@ -7,6 +7,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.2] — 2026-08-16
+
+### Fixed
+
+- Todo texto que aparece na tela passa a seguir o idioma escolhido. Mensagens de
+  progresso, erros, seletores, a árvore do Unity Catalog e o log do canal de
+  saída estavam fixos em português, independente da configuração.
+- As justificativas geradas pelo agente de IA saíam sempre em português, porque
+  o prompt nunca informava o idioma da interface. A instrução agora acompanha a
+  configuração e é reforçada no fim do prompt, onde o modelo de fato a respeita.
+- As explicações vindas do profiling (faixa observada, percentual de nulos,
+  valores distintos) eram montadas com texto fixo e formatação numérica pt-BR.
+  Agora seguem o idioma e o locale correspondente.
+
+### Changed
+
+- `t()` deixou de depender de `vscode`: o idioma resolvido é definido na
+  ativação e a cada troca de configuração. Isso permite que os módulos que
+  conversam com o Databricks traduzam suas mensagens sem quebrar a regra de
+  mantê-los testáveis fora do host da extensão.
+
 ## [0.0.1] — 2026-08-14
 
 First public release.
@@ -42,5 +63,6 @@ First public release.
   as soon as the extension reads them; dry-run payloads contain real table rows and
   are not left behind.
 
-[Unreleased]: https://github.com/arthurfr23/dqx_forge/compare/v0.0.1...HEAD
+[Unreleased]: https://github.com/arthurfr23/dqx_forge/compare/v0.0.2...HEAD
+[0.0.2]: https://github.com/arthurfr23/dqx_forge/releases/tag/v0.0.2
 [0.0.1]: https://github.com/arthurfr23/dqx_forge/releases/tag/v0.0.1

@@ -1,3 +1,4 @@
+import { t } from "../i18n/current";
 import * as vscode from "vscode";
 import type { CatalogClient } from "../remote/catalog_client";
 import type { JobRunner } from "../remote/job_runner";
@@ -73,16 +74,16 @@ export async function profileTable(
 
   const payload = result.payload;
   if (!payload.ok) {
-    deps.output.appendLine(payload.traceback ?? payload.error ?? "erro desconhecido");
+    deps.output.appendLine(payload.traceback ?? payload.error ?? t().msg_erroDesconhecido);
     deps.output.show(true);
-    throw new Error(payload.error ?? "O profiling falhou.");
+    throw new Error(payload.error ?? t().msg_profilingFalhou);
   }
 
   const checks = payload.checks ?? [];
   const profiles = payload.profiles ?? [];
 
   deps.output.appendLine(
-    `\n=== ${fullName} — ${checks.length} checks em ${(result.durationMs / 1000).toFixed(1)}s (DQX ${payload.dqx_version}) ===`,
+    `${t().log_profiling(fullName, checks.length, (result.durationMs / 1000).toFixed(1))} (DQX ${payload.dqx_version}) ===`,
   );
 
   // Cada sugestão carrega a estatística que a originou: é o que permite ao

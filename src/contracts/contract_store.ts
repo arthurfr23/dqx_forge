@@ -1,4 +1,5 @@
 import * as vscode from "vscode";
+import { t } from "../i18n/current";
 import {
   contractFileName,
   parseContract,
@@ -95,7 +96,7 @@ export class ContractStore {
   async save(contract: DqContract): Promise<vscode.Uri> {
     const dir = this.contractsDir();
     if (!dir) {
-      throw new Error("Abra a pasta do projeto para salvar contratos versionados.");
+      throw new Error(t().ctr_abraPastaParaSalvar);
     }
     await vscode.workspace.fs.createDirectory(dir);
 

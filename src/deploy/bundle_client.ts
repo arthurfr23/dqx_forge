@@ -1,6 +1,7 @@
 import { execFile } from "node:child_process";
 import { promisify } from "node:util";
 import * as vscode from "vscode";
+import { t } from "../i18n/current";
 
 const execFileAsync = promisify(execFile);
 
@@ -22,22 +23,22 @@ export class BundleClient {
   ) {}
 
   async validate(target: string): Promise<BundleResult> {
-    return await this.run(["bundle", "validate", "-t", target], "Validando o bundle…");
+    return await this.run(["bundle", "validate", "-t", target], t().bundle_validando);
   }
 
   async deploy(target: string): Promise<BundleResult> {
-    return await this.run(["bundle", "deploy", "-t", target], `Publicando no target ${target}…`);
+    return await this.run(["bundle", "deploy", "-t", target], t().bundle_publicando(target));
   }
 
   async runJob(jobKey: string, target: string): Promise<BundleResult> {
     return await this.run(
       ["bundle", "run", jobKey, "-t", target, "--no-wait"],
-      `Disparando ${jobKey}…`,
+      t().bundle_disparando(jobKey),
     );
   }
 
   async summary(target: string): Promise<BundleResult> {
-    return await this.run(["bundle", "summary", "-t", target], "Lendo o estado do bundle…");
+    return await this.run(["bundle", "summary", "-t", target], t().bundle_lendoEstado);
   }
 
   /** Alvos declarados no databricks.yml, para o usuário escolher em vez de digitar. */
@@ -74,7 +75,7 @@ export class BundleClient {
   private async run(args: string[], titulo: string): Promise<BundleResult> {
     const root = this.bundleRoot();
     if (!root) {
-      throw new Error("Não encontrei o databricks.yml. Abra a pasta do projeto.");
+      throw new Error(t().bundle_semArquivo);
     }
 
     const profile = this.profile();

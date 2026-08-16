@@ -226,6 +226,135 @@ export interface Catalogo {
   dim_unicidade: string;
   dim_consistencia: string;
   dim_atualidade: string;
+
+  // execução de jobs
+  job_enviandoScript: string;
+  job_iniciando: string;
+  job_aguardandoCompute: string;
+  job_executandoNoDatabricks: string;
+  job_finalizando: string;
+  job_executando: string;
+  job_estado: (estado: string) => string;
+  job_lendoResultado: string;
+  job_falhou: (detalhe: string) => string;
+  job_cancelado: string;
+
+  // bundle e CLI
+  bundle_validando: string;
+  bundle_publicando: (target: string) => string;
+  bundle_disparando: (job: string) => string;
+  bundle_lendoEstado: string;
+  bundle_semArquivo: string;
+  bundle_naoIniciou: (detalhe: string) => string;
+
+  // catálogo de checks
+  cat_lendo: string;
+  cat_naoLeu: string;
+  cat_versaoDivergente: (instalada: string, configurada: string) => string;
+
+  // árvore do Unity Catalog
+  arvore_semCatalogoFiltro: string;
+  arvore_semCatalogo: string;
+  arvore_falhaConectar: string;
+  arvore_erroCatalogo: string;
+  arvore_selecionarPerfil: string;
+
+  // contratos: leitura, validação e importação
+  ctr_abraPastaParaSalvar: string;
+  ctr_semWarehouse: string;
+  ctr_semListaDeChecks: string;
+  ctr_formatoDesconhecido: string;
+  ctr_nenhumCheckValido: string;
+  ctr_semMetaTable: string;
+  ctr_semChecks: string;
+  ctr_funcaoObrigatoria: string;
+  ctr_tabelaSemLinhas: (tabela: string) => string;
+  ctr_nenhumCheckEm: (tabela: string) => string;
+  ctr_itemNaoObjeto: (indice: number) => string;
+  ctr_itemSemFuncao: (indice: number) => string;
+  ctr_nomeTabelaInvalido: (nome: string) => string;
+
+  // autenticação
+  auth_semAccessToken: string;
+  auth_falhaGravar: (caminho: string, status: number, detalhe: string) => string;
+  auth_falhaRequisicao: (metodo: string, caminho: string, status: number, detalhe: string) => string;
+
+  // importação
+  imp_titulo: string;
+  imp_placeholder: string;
+  imp_arquivo: string;
+  imp_arquivoDescricao: string;
+  imp_arquivoDetalhe: string;
+  imp_odcsDetalhe: string;
+  imp_tabela: string;
+  imp_tabelaDescricao: string;
+  imp_tabelaDetalhe: string;
+  imp_tabelaChecksTitulo: string;
+  imp_tabelaChecksPrompt: string;
+  imp_semTabela: string;
+  imp_semArquivo: string;
+  imp_arquivoTitulo: string;
+  imp_odcsTitulo: string;
+  imp_convertendo: (nome: string) => string;
+  imp_semChecksNoContrato: string;
+  imp_aQualTabela: string;
+  imp_falhou: (detalhe: string) => string;
+  imp_nenhumAprovado: string;
+  imp_comObservacao: (n: number) => string;
+  imp_origemArquivo: string;
+  imp_origemOdcs: string;
+  imp_origemTabela: string;
+
+  // mensagens de erro das ações
+  erro_profiling: (detalhe: string) => string;
+  erro_agente: (detalhe: string) => string;
+  erro_gerarRecursos: (detalhe: string) => string;
+  erro_lerCatalogo: (detalhe: string) => string;
+  erro_alvoInvalido: string;
+  erro_informeCaminho: string;
+  erro_informeNome: string;
+  msg_copiado: (nome: string) => string;
+  msg_criandoWarehouse: string;
+  msg_nomeWarehouse: string;
+  msg_profilingFalhou: string;
+  msg_erroDesconhecido: string;
+
+  // log do canal de saída
+  log_agente: (tabela: string, provider: string) => string;
+  log_erro: (mensagem: string) => string;
+  log_semTexto: string;
+  log_descartadas: (n: number) => string;
+  log_resumoGeracao: string;
+  log_resumoLinha: (tabela: string, aceitos: number, rejeitados: number) => string;
+  log_profiling: (tabela: string, checks: number, segundos: string) => string;
+  log_dryRun: (tabela: string, checks: number, percentual: number) => string;
+  log_dryRunResumo: (erro: string, total: string, segundos: string) => string;
+  log_importacao: (fonte: string, tabela: string, aceitos: number, rejeitados: number) => string;
+  log_respostaModelo: (texto: string) => string;
+  log_semRegra: (tabela: string, motivo: string) => string;
+  log_dryRunFalhou: (motivo: string) => string;
+  msg_warehouseCriado: (nome: string) => string;
+  dry_escopoAmostra: (percentual: number) => string;
+  dry_titulo_progresso: (tabela: string, escopo: string) => string;
+  msg_motivoDesconhecido: string;
+
+  /** Código de localidade usado para formatar números nas explicações. */
+  locale: string;
+  perfil_semNulos: (total: string) => string;
+  perfil_percentualNulos: (percentual: string) => string;
+  perfil_faixa: (min: string, max: string) => string;
+  perfil_distintos: (distintos: string, total: string) => string;
+  /** Instrução acrescentada ao prompt do agente, para ele responder no idioma da interface. */
+  ia_idiomaDaResposta: string;
+  ia_justificativaLm: string;
+  ia_passoListando: (schema: string) => string;
+  ia_passoDescrevendo: (tabela: string) => string;
+  ia_passoAmostrando: (tabela: string) => string;
+  ia_passoAnalisando: (coluna: string, tabela: string) => string;
+  ia_passoSql: string;
+  ia_passoRegistrando: string;
+  ia_passoGenerico: (nome: string) => string;
+  dash_semContrato: string;
 }
 
 const ptBr: Catalogo = {
@@ -457,6 +586,137 @@ const ptBr: Catalogo = {
   dim_unicidade: "unicidade",
   dim_consistencia: "consistência",
   dim_atualidade: "atualidade",
+
+  job_enviandoScript: "Enviando o script para o workspace…",
+  job_iniciando: "Iniciando o job serverless…",
+  job_aguardandoCompute: "Aguardando o compute serverless…",
+  job_executandoNoDatabricks: "Executando no Databricks…",
+  job_finalizando: "Finalizando…",
+  job_executando: "Executando…",
+  job_estado: (estado) => `Estado: ${estado}`,
+  job_lendoResultado: "Lendo o resultado…",
+  job_falhou: (detalhe) => `O job falhou: ${detalhe}`,
+  job_cancelado: "Execução cancelada.",
+
+  bundle_validando: "Validando o bundle…",
+  bundle_publicando: (target) => `Publicando no target ${target}…`,
+  bundle_disparando: (job) => `Disparando ${job}…`,
+  bundle_lendoEstado: "Lendo o estado do bundle…",
+  bundle_semArquivo: "Não encontrei o databricks.yml. Abra a pasta do projeto.",
+  bundle_naoIniciou: (detalhe) => `Não foi possível iniciar: ${detalhe}`,
+
+  cat_lendo: "Lendo os checks do DQX",
+  cat_naoLeu: "Não foi possível ler o catálogo de checks.",
+  cat_versaoDivergente: (instalada, configurada) =>
+    `O workspace rodou o DQX ${instalada}, mas a configuração fixa ${configurada}.`,
+
+  arvore_semCatalogoFiltro: "Nenhum catálogo corresponde ao filtro",
+  arvore_semCatalogo: "Nenhum catálogo acessível",
+  arvore_falhaConectar: "Falha ao conectar no workspace",
+  arvore_erroCatalogo: "Erro ao ler o catálogo",
+  arvore_selecionarPerfil: "Selecionar perfil",
+
+  ctr_abraPastaParaSalvar: "Abra a pasta do projeto para salvar contratos versionados.",
+  ctr_semWarehouse:
+    "Ler uma tabela de checks exige um SQL warehouse. Escolha um em Configuração.",
+  ctr_semListaDeChecks:
+    "Não encontrei uma lista de checks. Esperado um array de checks ou um objeto com a chave 'checks'.",
+  ctr_formatoDesconhecido: "Formato não reconhecido.",
+  ctr_nenhumCheckValido: "Nenhum check válido foi encontrado no arquivo.",
+  ctr_semMetaTable: "Contrato sem meta.table — a extensão não sabe a que tabela ele pertence.",
+  ctr_semChecks: "Contrato sem lista de checks.",
+  ctr_funcaoObrigatoria: "check.function é obrigatório.",
+  ctr_tabelaSemLinhas: (tabela) => `A tabela ${tabela} não tem linhas.`,
+  ctr_nenhumCheckEm: (tabela) => `Nenhum check válido em ${tabela}.`,
+  ctr_itemNaoObjeto: (indice) => `Item ${indice} ignorado: não é um objeto.`,
+  ctr_itemSemFuncao: (indice) => `Item ${indice} ignorado: não tem check.function.`,
+  ctr_nomeTabelaInvalido: (nome) => `Nome de tabela inválido: ${nome}`,
+
+  auth_semAccessToken: "O CLI da Databricks não retornou um access_token.",
+  auth_falhaGravar: (caminho, status, detalhe) =>
+    `Falha ao gravar em ${caminho} (${status}): ${detalhe}`,
+  auth_falhaRequisicao: (metodo, caminho, status, detalhe) =>
+    `${metodo} ${caminho} falhou com ${status}: ${detalhe}`,
+
+  imp_titulo: "De onde vêm os checks?",
+  imp_placeholder: "Escolha a origem",
+  imp_arquivo: "Arquivo de checks do DQX",
+  imp_arquivoDescricao: "YAML ou JSON",
+  imp_arquivoDetalhe:
+    "Uma lista de checks no formato do DQX, ou um contrato já exportado pelo DQX Forge.",
+  imp_odcsDetalhe:
+    "O DQX deriva as regras do schema e da seção quality do contrato. Roda no Databricks.",
+  imp_tabela: "Tabela de checks no Unity Catalog",
+  imp_tabelaDescricao: "migração de quem já usa DQX",
+  imp_tabelaDetalhe: "Lê a tabela Delta onde as regras estão hoje e traz para o repositório.",
+  imp_tabelaChecksTitulo: "Tabela de checks",
+  imp_tabelaChecksPrompt: "Tabela Delta onde as regras estão hoje",
+  imp_semTabela: "Nenhuma tabela informada.",
+  imp_semArquivo: "Nenhum arquivo escolhido.",
+  imp_arquivoTitulo: "Arquivo de checks",
+  imp_odcsTitulo: "Contrato ODCS",
+  imp_convertendo: (nome) => `Convertendo ${nome}`,
+  imp_semChecksNoContrato: "O contrato não gerou nenhum check.",
+  imp_aQualTabela: "A que tabela estes checks se aplicam?",
+  imp_falhou: (detalhe) => `Não foi possível importar: ${detalhe}`,
+  imp_nenhumAprovado: "Nenhum check importado passou na validação. Veja o log para os motivos.",
+  imp_comObservacao: (n) => ` (${n} item(ns) com observação).`,
+  imp_origemArquivo: "Importado de um arquivo de checks.",
+  imp_origemOdcs: "Derivado de um data contract ODCS pelo DQX.",
+  imp_origemTabela: "Importado de uma tabela de checks do Unity Catalog.",
+
+  erro_profiling: (detalhe) => `Profiling falhou: ${detalhe}`,
+  erro_agente: (detalhe) => `O agente falhou: ${detalhe}`,
+  erro_gerarRecursos: (detalhe) => `Não foi possível gerar os recursos: ${detalhe}`,
+  erro_lerCatalogo: (detalhe) => `Não foi possível ler o catálogo: ${detalhe}`,
+  erro_alvoInvalido: "Informe catalog.schema ou catalog.schema.tabela.",
+  erro_informeCaminho: "Informe um caminho",
+  erro_informeNome: "Informe um nome",
+  msg_copiado: (nome) => `Copiado: ${nome}`,
+  msg_criandoWarehouse: "Criando o warehouse…",
+  msg_nomeWarehouse: "Nome do warehouse",
+  msg_profilingFalhou: "O profiling falhou.",
+  msg_erroDesconhecido: "erro desconhecido",
+
+  log_agente: (tabela, provider) => `\n=== agente de IA em ${tabela} (${provider}) ===`,
+  log_erro: (mensagem) => `  erro: ${mensagem}`,
+  log_semTexto: "\n  o modelo não devolveu texto nenhum",
+  log_descartadas: (n) => `\n${n} proposta(s) descartada(s) na validação:`,
+  log_resumoGeracao: "\n=== resumo da geração ===",
+  log_resumoLinha: (tabela, aceitos, rejeitados) =>
+    `  ${tabela}: ${aceitos} regras (${rejeitados} descartadas)`,
+  log_profiling: (tabela, checks, segundos) =>
+    `\n=== ${tabela} — ${checks} checks em ${segundos}s`,
+  log_dryRun: (tabela, checks, percentual) =>
+    `\n=== dry-run em ${tabela} · ${checks} checks · ${percentual}% ===`,
+  log_dryRunResumo: (erro, total, segundos) =>
+    `  ${erro} de ${total} linhas reprovadas em ${segundos}s`,
+  log_importacao: (fonte, tabela, aceitos, rejeitados) =>
+    `\n=== importação (${fonte}) para ${tabela}: ${aceitos} aceitos, ${rejeitados} rejeitados ===`,
+  log_respostaModelo: (texto) => `\n  resposta do modelo:\n${texto}`,
+  log_semRegra: (tabela, motivo) => `  ${tabela}: nenhuma regra — ${motivo}`,
+  log_dryRunFalhou: (motivo) => `  falhou: ${motivo}`,
+  msg_warehouseCriado: (nome) => `Warehouse "${nome}" criado.`,
+  dry_escopoAmostra: (percentual) => `amostra de ${percentual}%`,
+  dry_titulo_progresso: (tabela, escopo) => `Dry-run em ${tabela} (${escopo})`,
+  msg_motivoDesconhecido: "motivo desconhecido",
+
+  locale: "pt-BR",
+  perfil_semNulos: (total) => `Nenhum nulo em ${total} linhas amostradas.`,
+  perfil_percentualNulos: (percentual) => `${percentual}% de nulos na amostra.`,
+  perfil_faixa: (min, max) => `Faixa observada: ${min} a ${max}.`,
+  perfil_distintos: (distintos, total) => `${distintos} valores distintos em ${total} linhas.`,
+  ia_idiomaDaResposta:
+    "Escreva em português do Brasil todo texto destinado a pessoas: a justificativa de cada regra e o resumo final.",
+  ia_justificativaLm: "Gerar regras de qualidade de dados a partir do seu Lakehouse.",
+  ia_passoListando: (schema) => `Listando tabelas de ${schema}…`,
+  ia_passoDescrevendo: (tabela) => `Lendo o schema de ${tabela}…`,
+  ia_passoAmostrando: (tabela) => `Amostrando ${tabela}…`,
+  ia_passoAnalisando: (coluna, tabela) => `Analisando a coluna ${coluna} de ${tabela}…`,
+  ia_passoSql: "Confirmando uma hipótese com SQL…",
+  ia_passoRegistrando: "Registrando as regras propostas…",
+  ia_passoGenerico: (nome) => `Executando ${nome}…`,
+  dash_semContrato: "Nenhum contrato disponível para configurar o dashboard.",
 };
 
 const en: Catalogo = {
@@ -688,6 +948,134 @@ const en: Catalogo = {
   dim_unicidade: "uniqueness",
   dim_consistencia: "consistency",
   dim_atualidade: "timeliness",
+
+  job_enviandoScript: "Uploading the script to the workspace…",
+  job_iniciando: "Starting the serverless job…",
+  job_aguardandoCompute: "Waiting for serverless compute…",
+  job_executandoNoDatabricks: "Running on Databricks…",
+  job_finalizando: "Finishing…",
+  job_executando: "Running…",
+  job_estado: (estado) => `State: ${estado}`,
+  job_lendoResultado: "Reading the result…",
+  job_falhou: (detalhe) => `The job failed: ${detalhe}`,
+  job_cancelado: "Run cancelled.",
+
+  bundle_validando: "Validating the bundle…",
+  bundle_publicando: (target) => `Deploying to target ${target}…`,
+  bundle_disparando: (job) => `Triggering ${job}…`,
+  bundle_lendoEstado: "Reading the bundle state…",
+  bundle_semArquivo: "No databricks.yml found. Open the project folder.",
+  bundle_naoIniciou: (detalhe) => `Could not start: ${detalhe}`,
+
+  cat_lendo: "Reading the DQX checks",
+  cat_naoLeu: "Could not read the check catalog.",
+  cat_versaoDivergente: (instalada, configurada) =>
+    `The workspace ran DQX ${instalada}, but the configuration pins ${configurada}.`,
+
+  arvore_semCatalogoFiltro: "No catalog matches the filter",
+  arvore_semCatalogo: "No accessible catalog",
+  arvore_falhaConectar: "Failed to connect to the workspace",
+  arvore_erroCatalogo: "Error reading the catalog",
+  arvore_selecionarPerfil: "Select profile",
+
+  ctr_abraPastaParaSalvar: "Open the project folder to save versioned contracts.",
+  ctr_semWarehouse: "Reading a checks table requires a SQL warehouse. Pick one under Setup.",
+  ctr_semListaDeChecks:
+    "No list of checks found. Expected an array of checks or an object with a 'checks' key.",
+  ctr_formatoDesconhecido: "Unrecognised format.",
+  ctr_nenhumCheckValido: "No valid check was found in the file.",
+  ctr_semMetaTable: "Contract without meta.table — the extension cannot tell which table it belongs to.",
+  ctr_semChecks: "Contract without a list of checks.",
+  ctr_funcaoObrigatoria: "check.function is required.",
+  ctr_tabelaSemLinhas: (tabela) => `Table ${tabela} has no rows.`,
+  ctr_nenhumCheckEm: (tabela) => `No valid check in ${tabela}.`,
+  ctr_itemNaoObjeto: (indice) => `Item ${indice} skipped: not an object.`,
+  ctr_itemSemFuncao: (indice) => `Item ${indice} skipped: no check.function.`,
+  ctr_nomeTabelaInvalido: (nome) => `Invalid table name: ${nome}`,
+
+  auth_semAccessToken: "The Databricks CLI did not return an access_token.",
+  auth_falhaGravar: (caminho, status, detalhe) =>
+    `Failed to write to ${caminho} (${status}): ${detalhe}`,
+  auth_falhaRequisicao: (metodo, caminho, status, detalhe) =>
+    `${metodo} ${caminho} failed with ${status}: ${detalhe}`,
+
+  imp_titulo: "Where do the checks come from?",
+  imp_placeholder: "Choose the source",
+  imp_arquivo: "DQX checks file",
+  imp_arquivoDescricao: "YAML or JSON",
+  imp_arquivoDetalhe: "A list of checks in the DQX format, or a contract exported by DQX Forge.",
+  imp_odcsDetalhe:
+    "DQX derives the rules from the contract schema and its quality section. Runs on Databricks.",
+  imp_tabela: "Checks table in Unity Catalog",
+  imp_tabelaDescricao: "migration path for existing DQX users",
+  imp_tabelaDetalhe: "Reads the Delta table where the rules live today and brings them into the repository.",
+  imp_tabelaChecksTitulo: "Checks table",
+  imp_tabelaChecksPrompt: "Delta table where the rules live today",
+  imp_semTabela: "No table provided.",
+  imp_semArquivo: "No file chosen.",
+  imp_arquivoTitulo: "Checks file",
+  imp_odcsTitulo: "ODCS contract",
+  imp_convertendo: (nome) => `Converting ${nome}`,
+  imp_semChecksNoContrato: "The contract produced no checks.",
+  imp_aQualTabela: "Which table do these checks apply to?",
+  imp_falhou: (detalhe) => `Could not import: ${detalhe}`,
+  imp_nenhumAprovado: "No imported check passed validation. See the log for the reasons.",
+  imp_comObservacao: (n) => ` (${n} item(s) with remarks).`,
+  imp_origemArquivo: "Imported from a checks file.",
+  imp_origemOdcs: "Derived from an ODCS data contract by DQX.",
+  imp_origemTabela: "Imported from a checks table in Unity Catalog.",
+
+  erro_profiling: (detalhe) => `Profiling failed: ${detalhe}`,
+  erro_agente: (detalhe) => `The agent failed: ${detalhe}`,
+  erro_gerarRecursos: (detalhe) => `Could not generate the resources: ${detalhe}`,
+  erro_lerCatalogo: (detalhe) => `Could not read the catalog: ${detalhe}`,
+  erro_alvoInvalido: "Provide catalog.schema or catalog.schema.table.",
+  erro_informeCaminho: "Provide a path",
+  erro_informeNome: "Provide a name",
+  msg_copiado: (nome) => `Copied: ${nome}`,
+  msg_criandoWarehouse: "Creating the warehouse…",
+  msg_nomeWarehouse: "Warehouse name",
+  msg_profilingFalhou: "Profiling failed.",
+  msg_erroDesconhecido: "unknown error",
+
+  log_agente: (tabela, provider) => `\n=== AI agent on ${tabela} (${provider}) ===`,
+  log_erro: (mensagem) => `  error: ${mensagem}`,
+  log_semTexto: "\n  the model returned no text at all",
+  log_descartadas: (n) => `\n${n} proposal(s) discarded during validation:`,
+  log_resumoGeracao: "\n=== generation summary ===",
+  log_resumoLinha: (tabela, aceitos, rejeitados) =>
+    `  ${tabela}: ${aceitos} rules (${rejeitados} discarded)`,
+  log_profiling: (tabela, checks, segundos) => `\n=== ${tabela} — ${checks} checks in ${segundos}s`,
+  log_dryRun: (tabela, checks, percentual) =>
+    `\n=== dry run on ${tabela} · ${checks} checks · ${percentual}% ===`,
+  log_dryRunResumo: (erro, total, segundos) =>
+    `  ${erro} of ${total} rows rejected in ${segundos}s`,
+  log_importacao: (fonte, tabela, aceitos, rejeitados) =>
+    `\n=== import (${fonte}) into ${tabela}: ${aceitos} accepted, ${rejeitados} rejected ===`,
+  log_respostaModelo: (texto) => `\n  model response:\n${texto}`,
+  log_semRegra: (tabela, motivo) => `  ${tabela}: no rules — ${motivo}`,
+  log_dryRunFalhou: (motivo) => `  failed: ${motivo}`,
+  msg_warehouseCriado: (nome) => `Warehouse "${nome}" created.`,
+  dry_escopoAmostra: (percentual) => `${percentual}% sample`,
+  dry_titulo_progresso: (tabela, escopo) => `Dry run on ${tabela} (${escopo})`,
+  msg_motivoDesconhecido: "unknown reason",
+
+  locale: "en-US",
+  perfil_semNulos: (total) => `No nulls across ${total} sampled rows.`,
+  perfil_percentualNulos: (percentual) => `${percentual}% nulls in the sample.`,
+  perfil_faixa: (min, max) => `Observed range: ${min} to ${max}.`,
+  perfil_distintos: (distintos, total) => `${distintos} distinct values across ${total} rows.`,
+  ia_idiomaDaResposta:
+    "Write every human-facing text in English: the justification of each rule and the final summary.",
+  ia_justificativaLm: "Generate data quality rules from your Lakehouse.",
+  ia_passoListando: (schema) => `Listing tables in ${schema}…`,
+  ia_passoDescrevendo: (tabela) => `Reading the schema of ${tabela}…`,
+  ia_passoAmostrando: (tabela) => `Sampling ${tabela}…`,
+  ia_passoAnalisando: (coluna, tabela) => `Analysing column ${coluna} of ${tabela}…`,
+  ia_passoSql: "Confirming a hypothesis with SQL…",
+  ia_passoRegistrando: "Recording the proposed rules…",
+  ia_passoGenerico: (nome) => `Running ${nome}…`,
+  dash_semContrato: "No contract available to configure the dashboard.",
 };
 
 const es: Catalogo = {
@@ -920,6 +1308,137 @@ const es: Catalogo = {
   dim_unicidade: "unicidad",
   dim_consistencia: "consistencia",
   dim_atualidade: "actualidad",
+
+  job_enviandoScript: "Enviando el script al workspace…",
+  job_iniciando: "Iniciando el job serverless…",
+  job_aguardandoCompute: "Esperando el compute serverless…",
+  job_executandoNoDatabricks: "Ejecutando en Databricks…",
+  job_finalizando: "Finalizando…",
+  job_executando: "Ejecutando…",
+  job_estado: (estado) => `Estado: ${estado}`,
+  job_lendoResultado: "Leyendo el resultado…",
+  job_falhou: (detalhe) => `El job falló: ${detalhe}`,
+  job_cancelado: "Ejecución cancelada.",
+
+  bundle_validando: "Validando el bundle…",
+  bundle_publicando: (target) => `Publicando en el target ${target}…`,
+  bundle_disparando: (job) => `Lanzando ${job}…`,
+  bundle_lendoEstado: "Leyendo el estado del bundle…",
+  bundle_semArquivo: "No encontré el databricks.yml. Abre la carpeta del proyecto.",
+  bundle_naoIniciou: (detalhe) => `No se pudo iniciar: ${detalhe}`,
+
+  cat_lendo: "Leyendo los checks de DQX",
+  cat_naoLeu: "No se pudo leer el catálogo de checks.",
+  cat_versaoDivergente: (instalada, configurada) =>
+    `El workspace ejecutó DQX ${instalada}, pero la configuración fija ${configurada}.`,
+
+  arvore_semCatalogoFiltro: "Ningún catálogo coincide con el filtro",
+  arvore_semCatalogo: "Ningún catálogo accesible",
+  arvore_falhaConectar: "Error al conectar con el workspace",
+  arvore_erroCatalogo: "Error al leer el catálogo",
+  arvore_selecionarPerfil: "Seleccionar perfil",
+
+  ctr_abraPastaParaSalvar: "Abre la carpeta del proyecto para guardar contratos versionados.",
+  ctr_semWarehouse:
+    "Leer una tabla de checks requiere un SQL warehouse. Elige uno en Configuración.",
+  ctr_semListaDeChecks:
+    "No encontré una lista de checks. Se esperaba un array de checks o un objeto con la clave 'checks'.",
+  ctr_formatoDesconhecido: "Formato no reconocido.",
+  ctr_nenhumCheckValido: "No se encontró ningún check válido en el archivo.",
+  ctr_semMetaTable: "Contrato sin meta.table — la extensión no sabe a qué tabla pertenece.",
+  ctr_semChecks: "Contrato sin lista de checks.",
+  ctr_funcaoObrigatoria: "check.function es obligatorio.",
+  ctr_tabelaSemLinhas: (tabela) => `La tabla ${tabela} no tiene filas.`,
+  ctr_nenhumCheckEm: (tabela) => `Ningún check válido en ${tabela}.`,
+  ctr_itemNaoObjeto: (indice) => `Ítem ${indice} ignorado: no es un objeto.`,
+  ctr_itemSemFuncao: (indice) => `Ítem ${indice} ignorado: no tiene check.function.`,
+  ctr_nomeTabelaInvalido: (nome) => `Nombre de tabla inválido: ${nome}`,
+
+  auth_semAccessToken: "El CLI de Databricks no devolvió un access_token.",
+  auth_falhaGravar: (caminho, status, detalhe) =>
+    `Error al escribir en ${caminho} (${status}): ${detalhe}`,
+  auth_falhaRequisicao: (metodo, caminho, status, detalhe) =>
+    `${metodo} ${caminho} falló con ${status}: ${detalhe}`,
+
+  imp_titulo: "¿De dónde vienen los checks?",
+  imp_placeholder: "Elige el origen",
+  imp_arquivo: "Archivo de checks de DQX",
+  imp_arquivoDescricao: "YAML o JSON",
+  imp_arquivoDetalhe:
+    "Una lista de checks en el formato de DQX, o un contrato ya exportado por DQX Forge.",
+  imp_odcsDetalhe:
+    "DQX deriva las reglas del schema y de la sección quality del contrato. Se ejecuta en Databricks.",
+  imp_tabela: "Tabla de checks en Unity Catalog",
+  imp_tabelaDescricao: "migración para quien ya usa DQX",
+  imp_tabelaDetalhe: "Lee la tabla Delta donde están hoy las reglas y las trae al repositorio.",
+  imp_tabelaChecksTitulo: "Tabla de checks",
+  imp_tabelaChecksPrompt: "Tabla Delta donde están hoy las reglas",
+  imp_semTabela: "No se indicó ninguna tabla.",
+  imp_semArquivo: "No se eligió ningún archivo.",
+  imp_arquivoTitulo: "Archivo de checks",
+  imp_odcsTitulo: "Contrato ODCS",
+  imp_convertendo: (nome) => `Convirtiendo ${nome}`,
+  imp_semChecksNoContrato: "El contrato no generó ningún check.",
+  imp_aQualTabela: "¿A qué tabla se aplican estos checks?",
+  imp_falhou: (detalhe) => `No se pudo importar: ${detalhe}`,
+  imp_nenhumAprovado: "Ningún check importado pasó la validación. Revisa el registro para ver por qué.",
+  imp_comObservacao: (n) => ` (${n} ítem(s) con observación).`,
+  imp_origemArquivo: "Importado de un archivo de checks.",
+  imp_origemOdcs: "Derivado de un data contract ODCS por DQX.",
+  imp_origemTabela: "Importado de una tabla de checks de Unity Catalog.",
+
+  erro_profiling: (detalhe) => `El profiling falló: ${detalhe}`,
+  erro_agente: (detalhe) => `El agente falló: ${detalhe}`,
+  erro_gerarRecursos: (detalhe) => `No se pudieron generar los recursos: ${detalhe}`,
+  erro_lerCatalogo: (detalhe) => `No se pudo leer el catálogo: ${detalhe}`,
+  erro_alvoInvalido: "Indica catalog.schema o catalog.schema.tabla.",
+  erro_informeCaminho: "Indica una ruta",
+  erro_informeNome: "Indica un nombre",
+  msg_copiado: (nome) => `Copiado: ${nome}`,
+  msg_criandoWarehouse: "Creando el warehouse…",
+  msg_nomeWarehouse: "Nombre del warehouse",
+  msg_profilingFalhou: "El profiling falló.",
+  msg_erroDesconhecido: "error desconocido",
+
+  log_agente: (tabela, provider) => `\n=== agente de IA en ${tabela} (${provider}) ===`,
+  log_erro: (mensagem) => `  error: ${mensagem}`,
+  log_semTexto: "\n  el modelo no devolvió ningún texto",
+  log_descartadas: (n) => `\n${n} propuesta(s) descartada(s) en la validación:`,
+  log_resumoGeracao: "\n=== resumen de la generación ===",
+  log_resumoLinha: (tabela, aceitos, rejeitados) =>
+    `  ${tabela}: ${aceitos} reglas (${rejeitados} descartadas)`,
+  log_profiling: (tabela, checks, segundos) =>
+    `\n=== ${tabela} — ${checks} checks en ${segundos}s`,
+  log_dryRun: (tabela, checks, percentual) =>
+    `\n=== dry run en ${tabela} · ${checks} checks · ${percentual}% ===`,
+  log_dryRunResumo: (erro, total, segundos) =>
+    `  ${erro} de ${total} filas rechazadas en ${segundos}s`,
+  log_importacao: (fonte, tabela, aceitos, rejeitados) =>
+    `\n=== importación (${fonte}) en ${tabela}: ${aceitos} aceptados, ${rejeitados} rechazados ===`,
+  log_respostaModelo: (texto) => `\n  respuesta del modelo:\n${texto}`,
+  log_semRegra: (tabela, motivo) => `  ${tabela}: ninguna regla — ${motivo}`,
+  log_dryRunFalhou: (motivo) => `  falló: ${motivo}`,
+  msg_warehouseCriado: (nome) => `Warehouse "${nome}" creado.`,
+  dry_escopoAmostra: (percentual) => `muestra del ${percentual}%`,
+  dry_titulo_progresso: (tabela, escopo) => `Dry run en ${tabela} (${escopo})`,
+  msg_motivoDesconhecido: "motivo desconocido",
+
+  locale: "es-ES",
+  perfil_semNulos: (total) => `Ningún nulo en ${total} filas muestreadas.`,
+  perfil_percentualNulos: (percentual) => `${percentual}% de nulos en la muestra.`,
+  perfil_faixa: (min, max) => `Rango observado: de ${min} a ${max}.`,
+  perfil_distintos: (distintos, total) => `${distintos} valores distintos en ${total} filas.`,
+  ia_idiomaDaResposta:
+    "Escribe en español todo el texto dirigido a personas: la justificación de cada regla y el resumen final.",
+  ia_justificativaLm: "Generar reglas de calidad de datos a partir de tu Lakehouse.",
+  ia_passoListando: (schema) => `Listando tablas de ${schema}…`,
+  ia_passoDescrevendo: (tabela) => `Leyendo el schema de ${tabela}…`,
+  ia_passoAmostrando: (tabela) => `Muestreando ${tabela}…`,
+  ia_passoAnalisando: (coluna, tabela) => `Analizando la columna ${coluna} de ${tabela}…`,
+  ia_passoSql: "Confirmando una hipótesis con SQL…",
+  ia_passoRegistrando: "Registrando las reglas propuestas…",
+  ia_passoGenerico: (nome) => `Ejecutando ${nome}…`,
+  dash_semContrato: "Ningún contrato disponible para configurar el dashboard.",
 };
 
 const CATALOGOS: Record<Idioma, Catalogo> = { "pt-br": ptBr, en, es };

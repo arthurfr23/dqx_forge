@@ -1,3 +1,4 @@
+import { t } from "../i18n/current";
 import * as vscode from "vscode";
 import type { JobRunner } from "../remote/job_runner";
 import type { CheckCatalogEntry, CheckCatalogResult } from "./profiling";
@@ -49,7 +50,7 @@ export class CheckCatalog {
     const outputPath = this.runner.buildOutputPath("check_catalog");
 
     const result = await vscode.window.withProgress(
-      { location: vscode.ProgressLocation.Notification, title: "Lendo os checks do DQX" },
+      { location: vscode.ProgressLocation.Notification, title: t().cat_lendo },
       async (progress) =>
         await this.runner.run<CheckCatalogResult>({
           task: "introspect_task",
@@ -60,7 +61,7 @@ export class CheckCatalog {
     );
 
     if (!result.payload.ok || !result.payload.checks) {
-      throw new Error(result.payload.error ?? "Não foi possível ler o catálogo de checks.");
+      throw new Error(result.payload.error ?? t().cat_naoLeu);
     }
 
     // A versão é fixada na configuração e instalada com "==" nos jobs. Se o que
@@ -71,7 +72,7 @@ export class CheckCatalog {
     if (instalada && configurada && instalada !== configurada) {
       void vscode.window
         .showWarningMessage(
-          `O workspace rodou o DQX ${instalada}, mas a configuração fixa ${configurada}.`,
+          t().cat_versaoDivergente(instalada, configurada),
           `Fixar ${instalada}`,
         )
         .then((acao) => {

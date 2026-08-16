@@ -1,3 +1,4 @@
+import { t } from "../i18n/current";
 import { stringify as stringifyYaml } from "yaml";
 import type { DqContract } from "../contracts/contract_schema";
 
@@ -159,7 +160,7 @@ export function applyDashboardParameters(
 ): { conteudo: string; aplicados: string[] } {
   const alvo = contracts.find((c) => c.output.tabela_metricas) ?? contracts[0];
   if (!alvo) {
-    throw new Error("Nenhum contrato disponível para configurar o dashboard.");
+    throw new Error(t().dash_semContrato);
   }
 
   const curada = partes(alvo.output.tabela_saida ?? alvo.meta.table);

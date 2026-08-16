@@ -1,3 +1,4 @@
+import { t } from "../i18n/current";
 import * as vscode from "vscode";
 import type { ToolDefinition } from "./tools";
 import type { LlmMessage, LlmProvider, LlmResponse, ToolCall } from "./llm_provider";
@@ -49,7 +50,7 @@ export class VsCodeLmProvider implements LlmProvider {
         // Auto é o default; explicitar deixa claro que o modelo escolhe se e
         // qual ferramenta usar (Required aceitaria só uma ferramenta).
         toolMode: vscode.LanguageModelChatToolMode.Auto,
-        justification: "Gerar regras de qualidade de dados a partir do seu Lakehouse.",
+        justification: t().ia_justificativaLm,
       });
     } catch (err) {
       // Traduz os erros da IDE em algo acionável, em vez de "não propôs regras".

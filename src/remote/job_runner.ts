@@ -2,6 +2,7 @@ import { createHash } from "node:crypto";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { DatabricksAuth } from "../auth/databricks_auth";
+import { t } from "../i18n/current";
 
 const RESULT_MARKER = "DQX_FORGE_RESULT::";
 const POLL_INTERVAL_MS = 5_000;
@@ -77,10 +78,10 @@ export class JobRunner {
     const startedAt = Date.now();
     const report = options.onProgress ?? (() => undefined);
 
-    report("Enviando o script para o workspace…");
+    report(t().job_enviandoScript);
     const remotePath = await this.ensureTaskUploaded(options.task);
 
-    report("Iniciando o job serverless…");
+    report(t().job_iniciando);
     const submitted = await this.auth.request<{ run_id: number }>("/api/2.2/jobs/runs/submit", {
       method: "POST",
       body: {
@@ -124,10 +125,10 @@ export class JobRunner {
         state.status?.termination_details?.message ??
         state.state?.state_message ??
         `estado ${resultState ?? "desconhecido"}`;
-      throw new JobRunError(`O job falhou: ${detail}`, runId, state.run_page_url);
+      throw new JobRunError(t().job_falhou(detail), runId, state.run_page_url);
     }
 
-    report("Lendo o resultado…");
+    report(t().job_lendoResultado);
     const payload = await this.readVolumeJson<T>(options.outputPath);
     return { runId, payload, durationMs: Date.now() - startedAt };
   }
@@ -218,7 +219,7 @@ export class JobRunner {
     for (;;) {
       if (signal?.aborted) {
         await this.cancel(runId).catch(() => undefined);
-        throw new JobRunError("Execução cancelada.", runId);
+        throw new JobRunError(t().job_cancelado, runId);
       }
 
       const state = await this.auth.request<RunState>("/api/2.2/jobs/runs/get", {
@@ -277,13 +278,13 @@ function describeState(state: string): string {
   switch (state) {
     case "PENDING":
     case "QUEUED":
-      return "Aguardando o compute serverless…";
+      return t().job_aguardandoCompute;
     case "RUNNING":
-      return "Executando no Databricks…";
+      return t().job_executandoNoDatabricks;
     case "TERMINATING":
-      return "Finalizando…";
+      return t().job_finalizando;
     default:
-      return state ? `Estado: ${state}` : "Executando…";
+      return state ? t().job_estado(state) : t().job_executando;
   }
 }
 

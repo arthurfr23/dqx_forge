@@ -146,16 +146,16 @@ export async function selecionarWarehouse(auth: DatabricksAuth): Promise<string 
 
 async function criarWarehouse(auth: DatabricksAuth): Promise<string | undefined> {
   const nome = await vscode.window.showInputBox({
-    title: "Nome do warehouse",
+    title: t().msg_nomeWarehouse,
     value: "wh_dqx_forge",
-    validateInput: (v) => (v.trim() ? undefined : "Informe um nome"),
+    validateInput: (v) => (v.trim() ? undefined : t().erro_informeNome),
   });
   if (!nome) {
     return undefined;
   }
 
   return await vscode.window.withProgress(
-    { location: vscode.ProgressLocation.Notification, title: "Criando o warehouse…" },
+    { location: vscode.ProgressLocation.Notification, title: t().msg_criandoWarehouse },
     async () => {
       try {
         const criado = await auth.request<{ id: string }>("/api/2.0/sql/warehouses", {
@@ -169,7 +169,7 @@ async function criarWarehouse(auth: DatabricksAuth): Promise<string | undefined>
             warehouse_type: "PRO",
           },
         });
-        vscode.window.showInformationMessage(`Warehouse "${nome}" criado.`);
+        vscode.window.showInformationMessage(t().msg_warehouseCriado(nome));
         return criado.id;
       } catch (err) {
         // Criar compute costuma ser privilégio de admin: o erro cru da API não

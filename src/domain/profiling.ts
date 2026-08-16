@@ -1,3 +1,4 @@
+import { t } from "../i18n/current";
 import type { Dimension } from "./layer_profiles";
 
 /** Um check no formato nativo do DQX, consumível por apply_checks_by_metadata. */
@@ -103,14 +104,14 @@ export function explainCheck(
 
   if (check.check.function === "is_not_null" && total && nulls !== undefined) {
     return nulls === 0
-      ? `Nenhum nulo em ${total.toLocaleString("pt-BR")} linhas amostradas.`
-      : `${((nulls / total) * 100).toFixed(1)}% de nulos na amostra.`;
+      ? t().perfil_semNulos(total.toLocaleString(t().locale))
+      : t().perfil_percentualNulos(((nulls / total) * 100).toFixed(1));
   }
   if (check.check.function === "is_in_range") {
-    return `Faixa observada: ${format(columnStats.min)} a ${format(columnStats.max)}.`;
+    return t().perfil_faixa(format(columnStats.min), format(columnStats.max));
   }
   if (distinct !== undefined && total) {
-    return `${distinct.toLocaleString("pt-BR")} valores distintos em ${total.toLocaleString("pt-BR")} linhas.`;
+    return t().perfil_distintos(distinct.toLocaleString(t().locale), total.toLocaleString(t().locale));
   }
   return undefined;
 }
@@ -135,5 +136,5 @@ function format(value: unknown): string {
   if (value === null || value === undefined) {
     return "—";
   }
-  return typeof value === "number" ? value.toLocaleString("pt-BR") : String(value);
+  return typeof value === "number" ? value.toLocaleString(t().locale) : String(value);
 }

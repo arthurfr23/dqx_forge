@@ -23,14 +23,25 @@ import {
 } from "./commands/bundle_command";
 import { BundleClient } from "./deploy/bundle_client";
 import { importContract } from "./commands/import_command";
-import { IDIOMAS, type Idioma } from "./i18n/messages";
-import { t } from "./i18n/current";
+import { IDIOMAS, resolverIdioma, type Idioma } from "./i18n/messages";
+import { definirIdioma, t } from "./i18n/current";
 import { CheckCatalog } from "./domain/check_catalog";
 import { ContractStore, DEFAULT_CONTRACTS_DIR } from "./contracts/contract_store";
 import { ContractEditorPanel, type EditorDeps } from "./webview/panel";
 import { newContract } from "./contracts/contract_schema";
 
+/** Traduz a configuração no idioma efetivo, caindo no idioma da IDE quando vazia. */
+function idiomaConfigurado(): Idioma {
+  return resolverIdioma(
+    vscode.workspace.getConfiguration("dqxForge").get<string>("language", ""),
+    vscode.env.language,
+  );
+}
+
 export function activate(context: vscode.ExtensionContext): void {
+  // Antes de qualquer coisa: tudo que a extensão desenha passa por t().
+  definirIdioma(idiomaConfigurado());
+
   const config = vscode.workspace.getConfiguration("dqxForge");
   const auth = new DatabricksAuth(config.get<string>("profile", ""));
   const catalogClient = new CatalogClient(auth);
@@ -156,7 +167,7 @@ export function activate(context: vscode.ExtensionContext): void {
         });
       } catch (err) {
         vscode.window.showErrorMessage(
-          `Profiling falhou: ${err instanceof Error ? err.message : String(err)}`,
+          t().erro_profiling(err instanceof Error ? err.message : String(err)),
         );
       }
     }),
@@ -212,7 +223,7 @@ export function activate(context: vscode.ExtensionContext): void {
               ? { catalog: partes[0], schema: partes[1] }
               : undefined;
         if (!alvo) {
-          vscode.window.showErrorMessage("Informe catalog.schema ou catalog.schema.tabela.");
+          vscode.window.showErrorMessage(t().erro_alvoInvalido);
           return;
         }
       }
@@ -229,9 +240,9 @@ export function activate(context: vscode.ExtensionContext): void {
           store,
         });
       } catch (err) {
-        output.appendLine(`erro: ${err instanceof Error ? err.stack ?? err.message : String(err)}`);
+        output.appendLine(t().log_erro(err instanceof Error ? (err.stack ?? err.message) : String(err)));
         vscode.window.showErrorMessage(
-          `O agente falhou: ${err instanceof Error ? err.message : String(err)}`,
+          t().erro_agente(err instanceof Error ? err.message : String(err)),
         );
       }
     }),
@@ -267,7 +278,7 @@ export function activate(context: vscode.ExtensionContext): void {
         title: t().acao_pastaTitulo,
         prompt: t().acao_pastaPrompt,
         value: atual,
-        validateInput: (v) => (v.trim() ? undefined : "Informe um caminho"),
+        validateInput: (v) => (v.trim() ? undefined : t().erro_informeCaminho),
       });
       if (escolhido) {
         await vscode.workspace
@@ -308,7 +319,7 @@ export function activate(context: vscode.ExtensionContext): void {
         await generateBundleResources(store, context.extensionUri);
       } catch (err) {
         vscode.window.showErrorMessage(
-          `Não foi possível gerar os recursos: ${err instanceof Error ? err.message : String(err)}`,
+          t().erro_gerarRecursos(err instanceof Error ? err.message : String(err)),
         );
       }
     }),
@@ -325,7 +336,7 @@ export function activate(context: vscode.ExtensionContext): void {
         });
       } catch (err) {
         vscode.window.showErrorMessage(
-          `Importação falhou: ${err instanceof Error ? err.message : String(err)}`,
+          t().imp_falhou(err instanceof Error ? err.message : String(err)),
         );
       }
     }),
@@ -380,7 +391,7 @@ export function activate(context: vscode.ExtensionContext): void {
         );
       } catch (err) {
         vscode.window.showErrorMessage(
-          `Não foi possível ler o catálogo: ${err instanceof Error ? err.message : String(err)}`,
+          t().erro_lerCatalogo(err instanceof Error ? err.message : String(err)),
         );
       }
     }),
@@ -390,10 +401,13 @@ export function activate(context: vscode.ExtensionContext): void {
         return;
       }
       await vscode.env.clipboard.writeText(node.table.fullName);
-      vscode.window.setStatusBarMessage(`Copiado: ${node.table.fullName}`, 3000);
+      vscode.window.setStatusBarMessage(t().msg_copiado(node.table.fullName), 3000);
     }),
 
     vscode.workspace.onDidChangeConfiguration((event) => {
+      if (event.affectsConfiguration("dqxForge.language")) {
+        definirIdioma(idiomaConfigurado());
+      }
       if (event.affectsConfiguration("dqxForge")) {
         setupTree.refresh();
       }

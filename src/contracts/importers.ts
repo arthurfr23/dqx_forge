@@ -1,3 +1,4 @@
+import { t } from "../i18n/current";
 import { parse as parseYaml } from "yaml";
 import type { DqxCheck } from "../domain/profiling";
 import type { SqlClient } from "../remote/sql_client";
@@ -49,12 +50,10 @@ export function importFromText(texto: string): ImportResult {
         table = meta.table;
       }
     } else {
-      throw new Error(
-        "Não encontrei uma lista de checks. Esperado um array de checks ou um objeto com a chave 'checks'.",
-      );
+      throw new Error(t().ctr_semListaDeChecks);
     }
   } else {
-    throw new Error("Formato não reconhecido.");
+    throw new Error(t().ctr_formatoDesconhecido);
   }
 
   const checks: DqxCheck[] = [];
@@ -66,7 +65,7 @@ export function importFromText(texto: string): ImportResult {
   });
 
   if (!checks.length) {
-    throw new Error("Nenhum check válido foi encontrado no arquivo.");
+    throw new Error(t().ctr_nenhumCheckValido);
   }
 
   return { checks, table, avisos };
@@ -87,7 +86,7 @@ export async function importFromTable(
   );
 
   if (!linhas.length) {
-    throw new Error(`A tabela ${tabelaDeChecks} não tem linhas.`);
+    throw new Error(t().ctr_tabelaSemLinhas(tabelaDeChecks));
   }
 
   const checks: DqxCheck[] = [];
@@ -108,7 +107,7 @@ export async function importFromTable(
   });
 
   if (!checks.length) {
-    throw new Error(`Nenhum check válido em ${tabelaDeChecks}.`);
+    throw new Error(t().ctr_nenhumCheckEm(tabelaDeChecks));
   }
 
   return { checks, avisos };
@@ -116,7 +115,7 @@ export async function importFromTable(
 
 function normalizarCheck(item: unknown, indice: number, avisos: string[]): DqxCheck | undefined {
   if (!item || typeof item !== "object") {
-    avisos.push(`Item ${indice + 1} ignorado: não é um objeto.`);
+    avisos.push(t().ctr_itemNaoObjeto(indice + 1));
     return undefined;
   }
 
@@ -129,7 +128,7 @@ function normalizarCheck(item: unknown, indice: number, avisos: string[]): DqxCh
     (typeof objeto.function === "string" ? objeto.function : undefined);
 
   if (!funcao) {
-    avisos.push(`Item ${indice + 1} ignorado: não tem check.function.`);
+    avisos.push(t().ctr_itemSemFuncao(indice + 1));
     return undefined;
   }
 
@@ -186,7 +185,7 @@ function parseTalvezJson(valor: unknown): Record<string, unknown> | undefined {
 function escapeIdentifier(nome: string): string {
   const limpo = nome.trim().replace(/`/g, "");
   if (!/^[A-Za-z_][\w]*(\.[A-Za-z_][\w]*)*$/.test(limpo)) {
-    throw new Error(`Nome de tabela inválido: ${nome}`);
+    throw new Error(t().ctr_nomeTabelaInvalido(nome));
   }
   return limpo
     .split(".")

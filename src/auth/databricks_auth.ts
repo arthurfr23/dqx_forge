@@ -1,3 +1,4 @@
+import { t } from "../i18n/current";
 import { execFile } from "node:child_process";
 import { readFile } from "node:fs/promises";
 import { homedir } from "node:os";
@@ -87,7 +88,7 @@ export class DatabricksAuth {
       const { stdout } = await execFileAsync("databricks", args, { timeout: 120_000 });
       const parsed = JSON.parse(stdout) as { access_token?: string; expiry?: string };
       if (!parsed.access_token) {
-        throw new DatabricksAuthError("O CLI da Databricks não retornou um access_token.");
+        throw new DatabricksAuthError(t().auth_semAccessToken);
       }
       const expiresAt = parsed.expiry ? Date.parse(parsed.expiry) : Date.now() + 3_600_000;
       this.cachedToken = {
@@ -141,7 +142,12 @@ export class DatabricksAuth {
     if (!response.ok) {
       const detail = await response.text();
       throw new DatabricksAuthError(
-        `${init.method ?? "GET"} ${url.pathname} falhou com ${response.status}: ${truncate(detail, 500)}`,
+        t().auth_falhaRequisicao(
+          init.method ?? "GET",
+          url.pathname,
+          response.status,
+          truncate(detail, 500),
+        ),
       );
     }
 
@@ -172,7 +178,7 @@ export class DatabricksAuth {
     if (!response.ok) {
       const detail = await response.text();
       throw new DatabricksAuthError(
-        `Falha ao gravar em ${volumePath} (${response.status}): ${truncate(detail, 300)}`,
+        t().auth_falhaGravar(volumePath, response.status, truncate(detail, 300)),
       );
     }
   }
@@ -186,7 +192,9 @@ export class DatabricksAuth {
     const response = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
     if (!response.ok) {
       const detail = await response.text();
-      throw new DatabricksAuthError(`GET ${url.pathname} falhou com ${response.status}: ${truncate(detail, 500)}`);
+      throw new DatabricksAuthError(
+        t().auth_falhaRequisicao("GET", url.pathname, response.status, truncate(detail, 500)),
+      );
     }
     return await response.text();
   }

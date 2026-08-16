@@ -1,3 +1,4 @@
+import { t } from "../i18n/current";
 import { isMap, isSeq, parseDocument, type Node } from "yaml";
 import type { CheckCatalogEntry } from "../domain/profiling";
 
@@ -49,7 +50,7 @@ export function validateContractText(
   if (!isMap(meta) || !meta.get("table")) {
     issues.push({
       severity: "error",
-      message: "Contrato sem meta.table — a extensão não sabe a que tabela ele pertence.",
+      message: t().ctr_semMetaTable,
       offset: nodeRange(root),
     });
   }
@@ -58,7 +59,7 @@ export function validateContractText(
   if (!isSeq(checks)) {
     issues.push({
       severity: "error",
-      message: "Contrato sem lista de checks.",
+      message: t().ctr_semChecks,
       offset: nodeRange(root),
     });
     return issues;
@@ -117,7 +118,7 @@ export function validateContractText(
     if (typeof fnName !== "string") {
       issues.push({
         severity: "error",
-        message: "check.function é obrigatório.",
+        message: t().ctr_funcaoObrigatoria,
         offset: range,
         checkIndex: index,
       });

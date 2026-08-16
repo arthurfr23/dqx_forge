@@ -1,3 +1,4 @@
+import { t } from "../i18n/current";
 import type { CatalogClient } from "../remote/catalog_client";
 import type { SqlClient } from "../remote/sql_client";
 import type { CheckCatalogEntry, DqxCheck } from "../domain/profiling";
@@ -181,7 +182,9 @@ ${catalogoResumido}
 Assinaturas (argumento? = opcional):
 ${assinaturas}
 
-Use exatamente estes nomes de função e de argumento. Não invente funções.`;
+Use exatamente estes nomes de função e de argumento. Não invente funções.
+
+${t().ia_idiomaDaResposta}`;
 }
 
 function buildUserPrompt(options: AgentOptions): string {
@@ -213,24 +216,29 @@ function buildUserPrompt(options: AgentOptions): string {
     );
   }
 
+  // Repetida aqui de propósito: as instruções chegam ao modelo em português, o
+  // que o puxa a responder em português mesmo quando a interface está em outro
+  // idioma. Reforçar no fim do prompt é o que faz a justificativa sair certa.
+  partes.push(`\n${t().ia_idiomaDaResposta}`);
+
   return partes.join("\n");
 }
 
 function descreverChamada(nome: string, args: Record<string, unknown>): string {
   switch (nome) {
     case "list_tables":
-      return `Listando tabelas de ${args.catalog}.${args.schema}…`;
+      return t().ia_passoListando(`${args.catalog}.${args.schema}`);
     case "describe_table":
-      return `Lendo o schema de ${args.table}…`;
+      return t().ia_passoDescrevendo(String(args.table));
     case "sample_table":
-      return `Amostrando ${args.table}…`;
+      return t().ia_passoAmostrando(String(args.table));
     case "profile_column":
-      return `Analisando a coluna ${args.column} de ${args.table}…`;
+      return t().ia_passoAnalisando(String(args.column), String(args.table));
     case "run_sql":
-      return `Confirmando uma hipótese com SQL…`;
+      return t().ia_passoSql;
     case "propose_checks":
-      return `Registrando as regras propostas…`;
+      return t().ia_passoRegistrando;
     default:
-      return `Executando ${nome}…`;
+      return t().ia_passoGenerico(nome);
   }
 }

@@ -296,7 +296,7 @@ export async function runContractJob(
       await vscode.env.openExternal(vscode.Uri.parse(url));
     }
   } else {
-    vscode.window.showErrorMessage(`Não foi possível iniciar: ${resultado.stderr.slice(0, 200)}`);
+    vscode.window.showErrorMessage(t().bundle_naoIniciou(resultado.stderr.slice(0, 200)));
   }
 }
 

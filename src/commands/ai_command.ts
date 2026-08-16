@@ -107,7 +107,7 @@ export async function generateWithAgent(
             ? t().ia_progresso(indice + 1, tabelas.length, nomeCurto(tabela))
             : nomeCurto(tabela);
         progress.report({ message: rotulo });
-        deps.output.appendLine(`\n=== agente de IA em ${tabela} (${provider.descricao}) ===`);
+        deps.output.appendLine(t().log_agente(tabela, provider.descricao));
 
         try {
           resumos.push(
@@ -122,7 +122,7 @@ export async function generateWithAgent(
           );
         } catch (err) {
           const mensagem = err instanceof Error ? err.message : String(err);
-          deps.output.appendLine(`  erro: ${mensagem}`);
+          deps.output.appendLine(t().log_erro(mensagem));
           resumos.push({ tabela, aceitos: 0, rejeitados: 0, erro: mensagem });
         }
       }
@@ -174,9 +174,7 @@ async function gerarParaTabela(
   if (!resultado.propostas.length) {
     // Sem propostas, o texto do modelo é a única pista do que ele entendeu.
     deps.output.appendLine(
-      resultado.resumo
-        ? `\n  resposta do modelo:\n${resultado.resumo}`
-        : "\n  o modelo não devolveu texto nenhum",
+      resultado.resumo ? t().log_respostaModelo(resultado.resumo) : t().log_semTexto,
     );
     return {
       tabela,
@@ -221,7 +219,7 @@ async function gerarParaTabela(
   }
 
   if (rejeitados.length) {
-    deps.output.appendLine(`\n${rejeitados.length} proposta(s) descartada(s) na validação:`);
+    deps.output.appendLine(t().log_descartadas(rejeitados.length));
     for (const motivo of rejeitados) {
       deps.output.appendLine(`  ✗ ${motivo}`);
     }
@@ -311,12 +309,12 @@ async function reportar(resumos: ResumoTabela[], deps: AiDeps): Promise<void> {
   const comChecks = resumos.filter((r) => r.aceitos > 0);
   const falhas = resumos.filter((r) => r.aceitos === 0);
 
-  deps.output.appendLine("\n=== resumo da geração ===");
+  deps.output.appendLine(t().log_resumoGeracao);
   for (const resumo of resumos) {
     deps.output.appendLine(
       resumo.aceitos > 0
-        ? `  ${resumo.tabela}: ${resumo.aceitos} regras (${resumo.rejeitados} descartadas)`
-        : `  ${resumo.tabela}: nenhuma regra — ${resumo.erro ?? "motivo desconhecido"}`,
+        ? t().log_resumoLinha(resumo.tabela, resumo.aceitos, resumo.rejeitados)
+        : t().log_semRegra(resumo.tabela, resumo.erro ?? t().msg_motivoDesconhecido),
     );
   }
 

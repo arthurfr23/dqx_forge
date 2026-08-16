@@ -1,18 +1,23 @@
-import * as vscode from "vscode";
-import { catalogo, resolverIdioma, type Catalogo, type Idioma } from "./messages";
+import { catalogo, type Catalogo, type Idioma } from "./messages";
 
 /**
- * Idioma corrente da extensão. Lê a configuração a cada chamada em vez de
- * cachear, para que trocar o idioma tenha efeito imediato nos textos que a
- * extensão desenha depois disso.
+ * Idioma corrente da extensão, mantido aqui em vez de lido da configuração a
+ * cada chamada: assim `t()` não depende de `vscode` e pode ser usado também
+ * pelos módulos que conversam com o Databricks, que precisam continuar
+ * testáveis fora do host da extensão.
+ *
+ * Quem resolve a configuração é o extension.ts, na ativação e a cada troca.
  */
+let idioma: Idioma = "en";
+
+export function definirIdioma(novo: Idioma): void {
+  idioma = novo;
+}
+
 export function idiomaAtual(): Idioma {
-  return resolverIdioma(
-    vscode.workspace.getConfiguration("dqxForge").get<string>("language", ""),
-    vscode.env.language,
-  );
+  return idioma;
 }
 
 export function t(): Catalogo {
-  return catalogo(idiomaAtual());
+  return catalogo(idioma);
 }

@@ -38,7 +38,7 @@ export async function importContract(deps: ImportDeps): Promise<void> {
     resultado = await carregar(fonte, deps);
   } catch (err) {
     vscode.window.showErrorMessage(
-      `Não foi possível importar: ${err instanceof Error ? err.message : String(err)}`,
+      t().imp_falhou(err instanceof Error ? err.message : String(err)),
     );
     return;
   }
@@ -78,7 +78,7 @@ export async function importContract(deps: ImportDeps): Promise<void> {
   }
 
   deps.output.appendLine(
-    `\n=== importação (${fonte}) para ${tabela}: ${aceitos.length} aceitos, ${rejeitados.length} rejeitados ===`,
+    t().log_importacao(descreverFonte(fonte), tabela, aceitos.length, rejeitados.length),
   );
   for (const aviso of resultado.avisos) {
     deps.output.appendLine(`  ! ${aviso}`);
@@ -89,9 +89,7 @@ export async function importContract(deps: ImportDeps): Promise<void> {
 
   if (!aceitos.length) {
     deps.output.show(true);
-    vscode.window.showErrorMessage(
-      "Nenhum check importado passou na validação. Veja o log para os motivos.",
-    );
+    vscode.window.showErrorMessage(t().imp_nenhumAprovado);
     return;
   }
 
@@ -104,7 +102,7 @@ export async function importContract(deps: ImportDeps): Promise<void> {
   const problemas = rejeitados.length + resultado.avisos.length;
   const acao = await vscode.window.showInformationMessage(
     t().msg_checksImportados(aceitos.length, tabela) +
-      (problemas ? ` (${problemas} item(ns) com observação).` : "."),
+      (problemas ? t().imp_comObservacao(problemas) : "."),
     ...(problemas ? [t().msg_verDetalhes] : []),
   );
   if (acao) {
@@ -116,27 +114,25 @@ async function escolherFonte(): Promise<Fonte | undefined> {
   const escolha = await vscode.window.showQuickPick(
     [
       {
-        label: "$(file-code) Arquivo de checks do DQX",
-        description: "YAML ou JSON",
-        detail:
-          "Uma lista de checks no formato do DQX, ou um contrato já exportado pelo DQX Forge.",
+        label: `$(file-code) ${t().imp_arquivo}`,
+        description: t().imp_arquivoDescricao,
+        detail: t().imp_arquivoDetalhe,
         fonte: "arquivo" as const,
       },
       {
         label: "$(book) Data contract ODCS",
         description: "Open Data Contract Standard v3.x",
-        detail:
-          "O DQX deriva as regras do schema e da seção quality do contrato. Roda no Databricks.",
+        detail: t().imp_odcsDetalhe,
         fonte: "odcs" as const,
       },
       {
-        label: "$(database) Tabela de checks no Unity Catalog",
-        description: "migração de quem já usa DQX",
-        detail: "Lê a tabela Delta onde as regras estão hoje e traz para o repositório.",
+        label: `$(database) ${t().imp_tabela}`,
+        description: t().imp_tabelaDescricao,
+        detail: t().imp_tabelaDetalhe,
         fonte: "tabela" as const,
       },
     ],
-    { title: "De onde vêm os checks?", placeHolder: "Escolha a origem" },
+    { title: t().imp_titulo, placeHolder: t().imp_placeholder },
   );
   return escolha?.fonte;
 }
@@ -144,24 +140,22 @@ async function escolherFonte(): Promise<Fonte | undefined> {
 async function carregar(fonte: Fonte, deps: ImportDeps): Promise<ImportResult> {
   if (fonte === "tabela") {
     const tabelaChecks = await vscode.window.showInputBox({
-      title: "Tabela de checks",
-      prompt: "Tabela Delta onde as regras estão hoje",
+      title: t().imp_tabelaChecksTitulo,
+      prompt: t().imp_tabelaChecksPrompt,
       placeHolder: "catalog.schema.dq_checks",
-      validateInput: (v) => (v.split(".").length === 3 ? undefined : "Use catalog.schema.tabela"),
+      validateInput: (v) => (v.split(".").length === 3 ? undefined : t().pick_tabelaInvalida),
     });
     if (!tabelaChecks) {
-      throw new Error("Nenhuma tabela informada.");
+      throw new Error(t().imp_semTabela);
     }
     if (!deps.sql.configured) {
-      throw new Error(
-        "Ler uma tabela de checks exige um SQL warehouse. Escolha um em Configuração.",
-      );
+      throw new Error(t().ctr_semWarehouse);
     }
     return await importFromTable(deps.sql, tabelaChecks);
   }
 
   const arquivos = await vscode.window.showOpenDialog({
-    title: fonte === "odcs" ? "Contrato ODCS" : "Arquivo de checks",
+    title: fonte === "odcs" ? t().imp_odcsTitulo : t().imp_arquivoTitulo,
     canSelectMany: false,
     filters:
       fonte === "odcs"
@@ -170,7 +164,7 @@ async function carregar(fonte: Fonte, deps: ImportDeps): Promise<ImportResult> {
   });
   const arquivo = arquivos?.[0];
   if (!arquivo) {
-    throw new Error("Nenhum arquivo escolhido.");
+    throw new Error(t().imp_semArquivo);
   }
 
   if (fonte === "arquivo") {
@@ -194,7 +188,7 @@ async function importarOdcs(arquivo: vscode.Uri, deps: ImportDeps): Promise<Impo
 
   const outputPath = deps.runner.buildOutputPath("odcs_checks");
   const resultado = await vscode.window.withProgress(
-    { location: vscode.ProgressLocation.Notification, title: `Convertendo ${nome}` },
+    { location: vscode.ProgressLocation.Notification, title: t().imp_convertendo(nome) },
     async (progress) =>
       await deps.runner.run<{ ok: boolean; checks?: DqxCheck[]; error?: string }>({
         task: "contract_import_task",
@@ -206,7 +200,7 @@ async function importarOdcs(arquivo: vscode.Uri, deps: ImportDeps): Promise<Impo
   );
 
   if (!resultado.payload.ok || !resultado.payload.checks?.length) {
-    throw new Error(resultado.payload.error ?? "O contrato não gerou nenhum check.");
+    throw new Error(resultado.payload.error ?? t().imp_semChecksNoContrato);
   }
 
   return { checks: resultado.payload.checks, avisos: [] };
@@ -214,20 +208,32 @@ async function importarOdcs(arquivo: vscode.Uri, deps: ImportDeps): Promise<Impo
 
 async function perguntarTabela(): Promise<string | undefined> {
   return await vscode.window.showInputBox({
-    title: "A que tabela estes checks se aplicam?",
-    prompt: "Nome completo da tabela",
-    placeHolder: "catalog.schema.tabela",
-    validateInput: (v) => (v.split(".").length === 3 ? undefined : "Use catalog.schema.tabela"),
+    title: t().imp_aQualTabela,
+    prompt: t().pick_tabelaPrompt,
+    placeHolder: t().pick_tabelaPlaceholder,
+    validateInput: (v) => (v.split(".").length === 3 ? undefined : t().pick_tabelaInvalida),
   });
+}
+
+/** Rótulo traduzido da origem, usado no log — o identificador interno não vaza para a tela. */
+function descreverFonte(fonte: Fonte): string {
+  switch (fonte) {
+    case "arquivo":
+      return t().imp_arquivo;
+    case "odcs":
+      return t().imp_odcsTitulo;
+    case "tabela":
+      return t().imp_tabela;
+  }
 }
 
 function descreverOrigem(fonte: Fonte): string {
   switch (fonte) {
     case "arquivo":
-      return "Importado de um arquivo de checks.";
+      return t().imp_origemArquivo;
     case "odcs":
-      return "Derivado de um data contract ODCS pelo DQX.";
+      return t().imp_origemOdcs;
     case "tabela":
-      return "Importado de uma tabela de checks do Unity Catalog.";
+      return t().imp_origemTabela;
   }
 }

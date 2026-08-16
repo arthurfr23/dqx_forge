@@ -44,9 +44,7 @@ export async function runDryRun(
   }
 
   panel.setBusy(true, t().msg_dryRunPreparando);
-  output?.appendLine(
-    `\n=== dry-run em ${contract.meta.table} · ${contract.checks.length} checks · ${percentual}% ===`,
-  );
+  output?.appendLine(t().log_dryRun(contract.meta.table, contract.checks.length, percentual));
 
   const slug = contract.meta.table.replace(/\./g, "_");
   const checksPath = runner.buildOutputPath(`dryrun_checks_${slug}`);
@@ -59,12 +57,12 @@ export async function runDryRun(
   // O job leva minutos. Sem a notificação do VS Code, o rodapé do painel é o
   // único sinal de vida e o usuário conclui que o botão não funcionou.
   const escopo =
-    percentual >= 100 ? "tabela inteira" : `amostra de ${percentual}%`;
+    percentual >= 100 ? t().dry_tabelaInteira : t().dry_escopoAmostra(percentual);
 
   const result = await vscode.window.withProgress(
     {
       location: vscode.ProgressLocation.Notification,
-      title: `Dry-run em ${contract.meta.table} (${escopo})`,
+      title: t().dry_titulo_progresso(contract.meta.table, escopo),
       cancellable: true,
     },
     async (progress, token) => {
@@ -117,8 +115,12 @@ export async function runDryRun(
 
   output?.appendLine(
     payload.ok
-      ? `  ${resumo.linhasComErro} de ${resumo.linhasAmostradas} linhas reprovadas em ${(result.durationMs / 1000).toFixed(0)}s`
-      : `  falhou: ${resumo.erro ?? "erro desconhecido"}`,
+      ? t().log_dryRunResumo(
+          String(resumo.linhasComErro),
+          String(resumo.linhasAmostradas),
+          (result.durationMs / 1000).toFixed(0),
+        )
+      : t().log_dryRunFalhou(resumo.erro ?? t().msg_erroDesconhecido),
   );
 
   panel.setBusy(false);

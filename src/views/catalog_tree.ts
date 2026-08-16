@@ -1,3 +1,4 @@
+import { t } from "../i18n/current";
 import * as vscode from "vscode";
 import { CatalogClient, type ColumnInfo, type TableInfo } from "../remote/catalog_client";
 import { detectLayer, layerLabel } from "../domain/layer_profiles";
@@ -133,7 +134,7 @@ export class CatalogTreeProvider implements vscode.TreeDataProvider<Node> {
       return [
         {
           kind: "message",
-          label: filter.length ? "Nenhum catálogo corresponde ao filtro" : "Nenhum catálogo acessível",
+          label: filter.length ? t().arvore_semCatalogoFiltro : t().arvore_semCatalogo,
           detail: filter.length ? `Filtro: ${filter.join(", ")}` : undefined,
         },
       ];
@@ -146,10 +147,10 @@ export class CatalogTreeProvider implements vscode.TreeDataProvider<Node> {
     const isAuth = /perfil|token|auth|401|403/i.test(message);
     return {
       kind: "message",
-      label: isAuth ? "Falha ao conectar no workspace" : "Erro ao ler o catálogo",
+      label: isAuth ? t().arvore_falhaConectar : t().arvore_erroCatalogo,
       detail: message,
       command: isAuth
-        ? { command: "dqxForge.selectProfile", title: "Selecionar perfil" }
+        ? { command: "dqxForge.selectProfile", title: t().arvore_selecionarPerfil }
         : undefined,
     };
   }

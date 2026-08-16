@@ -1,3 +1,4 @@
+import { t } from "../i18n/current";
 import { DatabricksAuth } from "../auth/databricks_auth";
 
 export interface QueryResult {
@@ -36,9 +37,7 @@ export class SqlClient {
   async query(statement: string, rowLimit = 100): Promise<QueryResult> {
     const warehouse = this.warehouseId().trim();
     if (!warehouse) {
-      throw new Error(
-        "Nenhum SQL warehouse configurado. Defina dqxForge.warehouseId para habilitar consultas interativas.",
-      );
+      throw new Error(t().ctr_semWarehouse);
     }
 
     let response = await this.auth.request<StatementResponse>("/api/2.0/sql/statements", {
