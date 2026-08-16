@@ -7,6 +7,38 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.6] — 2026-08-16
+
+### Changed
+
+- **O dashboard passa a ser próprio, construído sobre as três tabelas que o
+  contrato declara** — validada, quarentena e métricas — no lugar do template
+  que vem com o DQX. São 5 datasets e 3 páginas em 32 KB, contra 19 datasets e
+  238 KB.
+
+  O template do DQX foi desenhado para uma instalação onde alguém procura, pelo
+  `information_schema`, quais tabelas do catálogo têm quarentena. Aqui o
+  contrato já diz quais são, então a descoberta era trabalho jogado fora — e
+  ela só encontrava a tabela depois do job ter rodado, o que deixava o painel
+  vazio no primeiro uso.
+
+  O eixo de tempo passa a ser o `run_time` da tabela de métricas, que existe
+  sempre, em vez de uma coluna de data de negócio na tabela de quarentena, que
+  a maioria das tabelas não tem — era a causa de 6 dos 19 datasets falharem com
+  `UNRESOLVED_COLUMN`.
+
+  Também não há mais filtro de período com intervalo fixo no arquivo, que no
+  template escondia todos os dados por padrão.
+
+### Notas de migração
+
+- Quem já tem `dq/dashboard/dqx_quality.lvdash.json` no repositório continua
+  com o antigo: a extensão só semeia quando o arquivo não existe, para não
+  sobrescrever customização. Apague o arquivo e gere os recursos de novo para
+  receber o novo.
+- O dashboard do DQX continua disponível pelo `databricks labs install dqx`,
+  para quem quiser a visão multi-tabela.
+
 ## [0.0.5] — 2026-08-16
 
 ### Changed
@@ -111,7 +143,8 @@ First public release.
   as soon as the extension reads them; dry-run payloads contain real table rows and
   are not left behind.
 
-[Unreleased]: https://github.com/arthurfr23/dqx_forge/compare/v0.0.5...HEAD
+[Unreleased]: https://github.com/arthurfr23/dqx_forge/compare/v0.0.6...HEAD
+[0.0.6]: https://github.com/arthurfr23/dqx_forge/releases/tag/v0.0.6
 [0.0.5]: https://github.com/arthurfr23/dqx_forge/releases/tag/v0.0.5
 [0.0.4]: https://github.com/arthurfr23/dqx_forge/releases/tag/v0.0.4
 [0.0.3]: https://github.com/arthurfr23/dqx_forge/releases/tag/v0.0.3

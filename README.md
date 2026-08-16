@@ -46,14 +46,19 @@ Serverless compute must be enabled in the workspace: profiling, dry runs and the
 
 ## Install
 
-The extension is not on the Marketplace yet. Install the packaged `.vsix`:
+From the [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=arthurfr23.dqx-forge) — search for **DQX Forge** in the Extensions tab, or:
+
+```bash
+code --install-extension arthurfr23.dqx-forge
+```
+
+<details>
+<summary>Or install a specific release from a .vsix</summary>
 
 1. Download `dqx-forge.vsix` from the [latest release](https://github.com/arthurfr23/dqx_forge/releases/latest).
-2. In VS Code: **Extensions** → `…` menu → **Install from VSIX…**, or from a terminal:
-   ```bash
-   code --install-extension dqx-forge.vsix
-   ```
-3. Reload the window. A **DQX Forge** icon appears in the Activity Bar.
+2. **Extensions** → `…` menu → **Install from VSIX…**, or `code --install-extension dqx-forge.vsix`.
+3. Reload the window.
+</details>
 
 <details>
 <summary>Or build it from source</summary>
@@ -97,7 +102,7 @@ Running *Generate bundle resources* builds a complete Databricks Asset Bundle ar
 ```
 databricks.yml                          created only if missing — yours to edit afterwards
 dq/contracts/<catalog>.<schema>.<table>.yml
-dq/dashboard/dqx_quality.lvdash.json    seeded from the bundled template
+dq/dashboard/dqx_quality.lvdash.json    seeded from the bundled dashboard
 resources/dq_jobs.yml                   generated, rewritten every time
 resources/dq_dashboard.yml              generated, only when a SQL warehouse is set
 src/dqx_runner/apply_task.py            generated, the script the job runs
@@ -112,12 +117,14 @@ The contracts folder is configurable. The **last two segments** of the path beco
 ```yaml
 meta:
   table: main.sales.orders
-  camada: silver
+  layer: silver
+  generated_by: ai_agent
+  generated_at: 2026-08-16T12:00:00.000Z
 output:
-  modo: quarentena                      # or: anotacao
-  tabela_saida: main.sales.orders_valid
-  tabela_quarentena: main.sales.orders_quarantine
-  tabela_metricas: main.sales.dq_metrics
+  mode: quarantine                      # or: annotate
+  output_table: main.sales.orders_valid
+  quarantine_table: main.sales.orders_quarantine
+  metrics_table: main.sales.dq_metrics
 checks:
   - criticality: error
     name: order_id_not_null
@@ -126,8 +133,10 @@ checks:
       arguments:
         column: order_id
     user_metadata:
-      dimensao: completude
+      dimension: completeness
 ```
+
+The `checks` list is DQX's own format, passed straight to the engine — a contract stays usable by any DQX installation. The `meta` and `output` blocks are DQX Forge's, and describe what the generated job should do with the results.
 
 `error` checks route rows to quarantine. `warn` checks are non-blocking: the row still reaches the output table **and** is surfaced in quarantine for review, which is DQX's behaviour — expect a row with only warnings to appear in both.
 
@@ -208,7 +217,7 @@ Every command is available from the Command Palette under `DQX Forge:`.
 
 **A job fails right after deploy** — check that the artifacts volume is set. Without it the generated output path is invalid and the failure only surfaces at run time.
 
-**The dashboard's period pages are empty** — those tiles need a `DATE` or `TIMESTAMP` column in the quarantine table. Tables without one can still use every other page.
+**The dashboard is empty** — it reads the metrics, quarantine and validated tables the contract declares, so it only has data after the job has run at least once. If a contract has no `metrics_table`, the Overview page stays blank while the other pages still work.
 
 **A serverless run takes minutes on the first try** — that is the compute starting from scratch. Subsequent runs in the same session are much faster.
 
@@ -228,7 +237,9 @@ npm run vsix         # package dqx-forge.vsix
 
 The Python task scripts live in `tasks/`, are copied into `dist/tasks/` at build time and shipped inside the `.vsix`. `apply_task.py` is also written into the user's repository during resource generation, because the scheduled job references it by relative path; the others are uploaded straight to the workspace for interactive runs.
 
-`resources/dashboard/dqx_quality.lvdash.json` is the quality dashboard template, seeded into a user's repository when they do not have one yet. Its parameters are rewritten with the project's real tables during generation, so the placeholders in the template are never what ships.
+`resources/dashboard/dqx_quality.lvdash.json` is the quality dashboard, seeded into a user's repository when they do not have one yet. Its parameters are rewritten with the project's real tables during generation, so the placeholders in the file are never what ships.
+
+It is built around the three tables the contract declares — validated, quarantine and metrics — rather than discovering tables through `information_schema`. The time axis is `run_time` from the metrics table, which always exists, instead of a business date column, which most tables do not have. That is a deliberate departure from the dashboard bundled with DQX itself: it is smaller and works without configuration, at the cost of covering one contract at a time.
 
 Contributions are welcome — see [CONTRIBUTING.md](CONTRIBUTING.md).
 
