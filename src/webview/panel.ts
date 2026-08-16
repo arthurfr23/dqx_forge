@@ -183,7 +183,7 @@ export class ContractEditorPanel {
       catalog,
       columns: columns.map((c) => ({ name: c.name, type: c.typeText, nullable: c.nullable })),
       issues: await this.validate(catalog.length ? catalog : undefined, columns.map((c) => c.name)),
-      dimensoesSugeridas: defaultDimensions(this.contract.meta.camada),
+      dimensoesSugeridas: defaultDimensions(this.contract.meta.layer),
       salvo: (await this.deps.store.find(this.contract.meta.table)) !== undefined,
       idioma: resolverIdioma(
         vscode.workspace.getConfiguration("dqxForge").get<string>("language", ""),

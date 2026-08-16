@@ -7,7 +7,7 @@ import type { Idioma } from "../i18n/messages";
 /** Por que um check foi sugerido — o que o usuário lê para decidir se aceita. */
 export interface CheckOrigin {
   explicacao?: string;
-  dimensao?: Dimension;
+  dimension?: Dimension;
   /** Sugestões vindas de profiling/IA começam desmarcadas para revisão. */
   sugerido: boolean;
 }

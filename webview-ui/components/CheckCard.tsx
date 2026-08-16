@@ -25,7 +25,7 @@ export function CheckCard({
   onChange,
   onRemove,
 }: Props) {
-  const dimensao = origin?.dimensao ?? entry?.dimension;
+  const dimension = origin?.dimension ?? entry?.dimension;
 
   const setArgument = (name: string, value: unknown) => {
     const args = { ...check.check.arguments };
@@ -65,9 +65,9 @@ export function CheckCard({
           <span className="check-col">{check.check.arguments.column}</span>
         )}
 
-        {dimensao && (
+        {dimension && (
           // A classe fica no nome canônico (pt) para o CSS; só o rótulo traduz.
-          <span className={`badge dim-${dimensao}`}>{t[`dim_${dimensao}`]}</span>
+          <span className={`badge dim-${dimension}`}>{t[`dim_${dimension}`]}</span>
         )}
         {entry?.scope === "dataset" && <span className="badge">dataset</span>}
 

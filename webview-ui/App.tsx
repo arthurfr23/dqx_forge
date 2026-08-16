@@ -93,15 +93,15 @@ export function App() {
     atualizar({ ...contract, checks: [...contract.checks, check] });
   };
 
-  const alterarModo = (modo: ModoSaida) => {
+  const alterarModo = (mode: ModoSaida) => {
     atualizar({
       ...contract,
       output: {
         ...contract.output,
-        modo,
-        tabela_quarentena:
-          modo === "quarentena"
-            ? (contract.output.tabela_quarentena ?? `${contract.meta.table}_quarentena`)
+        mode,
+        quarantine_table:
+          mode === "quarantine"
+            ? (contract.output.quarantine_table ?? `${contract.meta.table}_quarantine`)
             : undefined,
       },
     });
@@ -114,8 +114,8 @@ export function App() {
     <div className="app">
       <header className="header">
         <h1>{contract.meta.table}</h1>
-        <span className="badge">{contract.meta.camada}</span>
-        <span className="badge">{contract.meta.gerado_por.replace("_", " ")}</span>
+        <span className="badge">{contract.meta.layer}</span>
+        <span className="badge">{contract.meta.generated_by.replace("_", " ")}</span>
         <span className="sub">
           {t.editor_checks(contract.checks.length)}
           {contract.meta.dqx_version ? ` · DQX ${contract.meta.dqx_version}` : ""}
@@ -133,22 +133,22 @@ export function App() {
               <label>
                 <input
                   type="radio"
-                  checked={contract.output.modo === "anotacao"}
-                  onChange={() => alterarModo("anotacao")}
+                  checked={contract.output.mode === "annotate"}
+                  onChange={() => alterarModo("annotate")}
                 />
                 {t.saida_anotar}
               </label>
               <label>
                 <input
                   type="radio"
-                  checked={contract.output.modo === "quarentena"}
-                  onChange={() => alterarModo("quarentena")}
+                  checked={contract.output.mode === "quarantine"}
+                  onChange={() => alterarModo("quarantine")}
                 />
                 {t.saida_quarentena}
               </label>
             </div>
             <p className="hint">
-              {contract.output.modo === "anotacao" ? t.saida_anotarDica : t.saida_quarentenaDica}
+              {contract.output.mode === "annotate" ? t.saida_anotarDica : t.saida_quarentenaDica}
             </p>
 
             <div className="check-args" style={{ marginTop: 10 }}>
@@ -156,28 +156,28 @@ export function App() {
               <input
                 id="tabela-saida"
                 type="text"
-                value={contract.output.tabela_saida ?? ""}
+                value={contract.output.output_table ?? ""}
                 onChange={(e) =>
                   atualizar({
                     ...contract,
-                    output: { ...contract.output, tabela_saida: e.target.value || undefined },
+                    output: { ...contract.output, output_table: e.target.value || undefined },
                   })
                 }
               />
 
-              {contract.output.modo === "quarentena" && (
+              {contract.output.mode === "quarantine" && (
                 <>
                   <label htmlFor="tabela-quarentena">{t.saida_tabelaQuarentena}</label>
                   <input
                     id="tabela-quarentena"
                     type="text"
-                    value={contract.output.tabela_quarentena ?? ""}
+                    value={contract.output.quarantine_table ?? ""}
                     onChange={(e) =>
                       atualizar({
                         ...contract,
                         output: {
                           ...contract.output,
-                          tabela_quarentena: e.target.value || undefined,
+                          quarantine_table: e.target.value || undefined,
                         },
                       })
                     }
@@ -190,11 +190,11 @@ export function App() {
                 id="tabela-metricas"
                 type="text"
                 placeholder={t.saida_tabelaMetricasDica}
-                value={contract.output.tabela_metricas ?? ""}
+                value={contract.output.metrics_table ?? ""}
                 onChange={(e) =>
                   atualizar({
                     ...contract,
-                    output: { ...contract.output, tabela_metricas: e.target.value || undefined },
+                    output: { ...contract.output, metrics_table: e.target.value || undefined },
                   })
                 }
               />

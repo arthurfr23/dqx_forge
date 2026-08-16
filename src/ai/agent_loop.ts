@@ -170,7 +170,7 @@ function buildSystemPrompt(options: AgentOptions): string {
   }
 
   const catalogoResumido = [...porDimensao.entries()]
-    .map(([dimensao, nomes]) => `- ${dimensao}: ${nomes.join(", ")}`)
+    .map(([dimension, nomes]) => `- ${dimension}: ${nomes.join(", ")}`)
     .join("\n");
 
   const assinaturas = options.checkCatalog

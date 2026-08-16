@@ -195,7 +195,7 @@ async function gerarParaTabela(
     const teste = newContract({
       table: tabela,
       checks: [proposta.check],
-      origem: "ia_agente",
+      origem: "ai_agent",
       columns: colunas,
     });
     const problemas = validateContractText(serializeContract(teste), {
@@ -213,7 +213,7 @@ async function gerarParaTabela(
     origins[aceitos.length] = {
       sugerido: true,
       explicacao: proposta.justificativa,
-      dimensao: proposta.check.user_metadata?.dimensao as CheckOrigin["dimensao"],
+      dimension: proposta.check.user_metadata?.dimension as CheckOrigin["dimension"],
     };
     aceitos.push(proposta.check);
   }
@@ -228,7 +228,7 @@ async function gerarParaTabela(
   if (aceitos.length) {
     await ContractEditorPanel.show(
       deps.editor,
-      newContract({ table: tabela, checks: aceitos, origem: "ia_agente", columns: colunas }),
+      newContract({ table: tabela, checks: aceitos, origem: "ai_agent", columns: colunas }),
       origins,
     );
   }
@@ -377,9 +377,9 @@ async function tabelasDerivadas(store: ContractStore): Promise<Set<string>> {
   const nomes = new Set<string>();
   for (const { contract } of await store.list()) {
     for (const destino of [
-      contract.output.tabela_saida,
-      contract.output.tabela_quarentena,
-      contract.output.tabela_metricas,
+      contract.output.output_table,
+      contract.output.quarantine_table,
+      contract.output.metrics_table,
     ]) {
       // A tabela de origem também aparece como saída no modo anotação; ela
       // continua sendo um alvo legítimo, então não entra na lista.

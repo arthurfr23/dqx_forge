@@ -4,15 +4,15 @@
  * truth, onde mora o grosso da validação — por isso cada camada recebe um
  * conjunto default de dimensões a cobrir.
  */
-export type Layer = "raw" | "bronze" | "silver" | "gold" | "mart" | "desconhecida";
+export type Layer = "raw" | "bronze" | "silver" | "gold" | "mart" | "unknown";
 
 export type Dimension =
-  | "completude"
-  | "validade"
-  | "acuracia"
-  | "unicidade"
-  | "consistencia"
-  | "atualidade";
+  | "completeness"
+  | "validity"
+  | "accuracy"
+  | "uniqueness"
+  | "consistency"
+  | "timeliness";
 
 const PREFIX_TO_LAYER: ReadonlyArray<[string, Layer]> = [
   ["raw_", "raw"],
@@ -23,12 +23,12 @@ const PREFIX_TO_LAYER: ReadonlyArray<[string, Layer]> = [
 ];
 
 const LAYER_DIMENSIONS: Record<Layer, Dimension[]> = {
-  raw: ["validade", "atualidade"],
-  bronze: ["validade", "atualidade"],
-  silver: ["completude", "unicidade", "consistencia", "validade"],
-  gold: ["acuracia", "consistencia", "atualidade"],
-  mart: ["acuracia", "consistencia"],
-  desconhecida: ["completude", "validade"],
+  raw: ["validity", "timeliness"],
+  bronze: ["validity", "timeliness"],
+  silver: ["completeness", "uniqueness", "consistency", "validity"],
+  gold: ["accuracy", "consistency", "timeliness"],
+  mart: ["accuracy", "consistency"],
+  unknown: ["completeness", "validity"],
 };
 
 const LAYER_LABEL: Record<Layer, string> = {
@@ -37,7 +37,7 @@ const LAYER_LABEL: Record<Layer, string> = {
   silver: "silver",
   gold: "gold",
   mart: "mart",
-  desconhecida: "",
+  unknown: "",
 };
 
 export function detectLayer(tableName: string): Layer {
@@ -47,7 +47,7 @@ export function detectLayer(tableName: string): Layer {
       return layer;
     }
   }
-  return "desconhecida";
+  return "unknown";
 }
 
 export function layerLabel(layer: Layer): string {

@@ -72,7 +72,7 @@ export async function importContract(deps: ImportDeps): Promise<void> {
     origins[aceitos.length] = {
       sugerido: true,
       explicacao: descreverOrigem(fonte),
-      dimensao: check.user_metadata?.dimensao as CheckOrigin["dimensao"],
+      dimension: check.user_metadata?.dimension as CheckOrigin["dimension"],
     };
     aceitos.push(check);
   }

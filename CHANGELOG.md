@@ -7,6 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.5] — 2026-08-16
+
+### Changed
+
+- **O YAML gerado passa a ser inteiramente em inglês, independente do idioma da
+  interface.** O contrato usa `layer`, `generated_by`, `generated_at`, `mode`,
+  `output_table`, `quarantine_table`, `metrics_table` e `dimension`, com valores
+  `annotate`/`quarantine`, `ai_agent`/`ai_assisted` e dimensões em inglês. As
+  tags do job, os cabeçalhos dos arquivos derivados e o nome do dashboard
+  seguem o mesmo critério. O idioma da interface continua configurável — ele
+  nunca decidiu o formato de um artefato de repositório, que é lido por
+  ferramentas e por pessoas de fora do time.
+
+### Fixed
+
+- Contratos no formato antigo continuam sendo lidos e migram para o formato
+  novo no próximo save, sem intervenção. O `apply_task.py` aceita as duas
+  grafias, então jobs já publicados seguem funcionando até serem regerados.
+
 ## [0.0.4] — 2026-08-16
 
 ### Fixed
@@ -92,7 +111,8 @@ First public release.
   as soon as the extension reads them; dry-run payloads contain real table rows and
   are not left behind.
 
-[Unreleased]: https://github.com/arthurfr23/dqx_forge/compare/v0.0.4...HEAD
+[Unreleased]: https://github.com/arthurfr23/dqx_forge/compare/v0.0.5...HEAD
+[0.0.5]: https://github.com/arthurfr23/dqx_forge/releases/tag/v0.0.5
 [0.0.4]: https://github.com/arthurfr23/dqx_forge/releases/tag/v0.0.4
 [0.0.3]: https://github.com/arthurfr23/dqx_forge/releases/tag/v0.0.3
 [0.0.2]: https://github.com/arthurfr23/dqx_forge/releases/tag/v0.0.2

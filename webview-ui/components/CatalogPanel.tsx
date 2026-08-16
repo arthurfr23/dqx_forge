@@ -4,12 +4,12 @@ import type { Dimension } from "../../src/domain/layer_profiles";
 import type { Catalogo } from "../../src/i18n/messages";
 
 const DIMENSOES: Dimension[] = [
-  "completude",
-  "validade",
-  "acuracia",
-  "unicidade",
-  "consistencia",
-  "atualidade",
+  "completeness",
+  "validity",
+  "accuracy",
+  "uniqueness",
+  "consistency",
+  "timeliness",
 ];
 
 interface Props {
@@ -22,15 +22,15 @@ interface Props {
 
 export function CatalogPanel({ catalog, dimensoesSugeridas, colunaPadrao, t, onAdd }: Props) {
   const [busca, setBusca] = useState("");
-  const [dimensao, setDimensao] = useState<Dimension | "todas">("todas");
+  const [dimension, setDimensao] = useState<Dimension | "todas">("todas");
 
   const visiveis = useMemo(() => {
     const termo = busca.trim().toLowerCase();
     return catalog
-      .filter((c) => dimensao === "todas" || c.dimension === dimensao)
+      .filter((c) => dimension === "todas" || c.dimension === dimension)
       .filter((c) => !termo || c.name.includes(termo) || c.doc.toLowerCase().includes(termo))
       .sort((a, b) => a.name.localeCompare(b.name));
-  }, [catalog, busca, dimensao]);
+  }, [catalog, busca, dimension]);
 
   const adicionar = (entry: CheckCatalogEntry) => {
     const args: Record<string, unknown> = {};
@@ -42,7 +42,7 @@ export function CatalogPanel({ catalog, dimensoesSugeridas, colunaPadrao, t, onA
       criticality: "error",
       name: colunaPadrao ? `${colunaPadrao}_${entry.name}` : entry.name,
       check: { function: entry.name, arguments: args },
-      user_metadata: { dimensao: entry.dimension },
+      user_metadata: { dimension: entry.dimension },
     });
   };
 
@@ -59,7 +59,7 @@ export function CatalogPanel({ catalog, dimensoesSugeridas, colunaPadrao, t, onA
       />
 
       <select
-        value={dimensao}
+        value={dimension}
         onChange={(e) => setDimensao(e.target.value as Dimension | "todas")}
         style={{ marginBottom: 10 }}
       >
@@ -72,7 +72,7 @@ export function CatalogPanel({ catalog, dimensoesSugeridas, colunaPadrao, t, onA
         ))}
       </select>
 
-      {dimensoesSugeridas.length > 0 && dimensao === "todas" && (
+      {dimensoesSugeridas.length > 0 && dimension === "todas" && (
         <p className="hint" style={{ marginBottom: 10 }}>
           {t.catalogo_recomendadas(dimensoesSugeridas.map((d) => t[`dim_${d}`]).join(", "))}
         </p>

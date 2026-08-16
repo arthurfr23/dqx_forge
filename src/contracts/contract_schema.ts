@@ -4,23 +4,23 @@ import type { ColumnInfo } from "../remote/catalog_client";
 import type { DqxCheck } from "../domain/profiling";
 import { detectLayer, type Layer } from "../domain/layer_profiles";
 
-export type OrigemContrato = "profiling" | "ia_assistida" | "ia_agente" | "import" | "manual";
-export type ModoSaida = "quarentena" | "anotacao";
+export type OrigemContrato = "profiling" | "ai_assisted" | "ai_agent" | "import" | "manual";
+export type ModoSaida = "quarantine" | "annotate";
 
 export interface ContractMeta {
   table: string;
-  camada: Layer;
-  gerado_por: OrigemContrato;
-  gerado_em: string;
+  layer: Layer;
+  generated_by: OrigemContrato;
+  generated_at: string;
   dqx_version?: string;
   schema_fingerprint?: string;
 }
 
 export interface ContractOutput {
-  modo: ModoSaida;
-  tabela_saida?: string;
-  tabela_quarentena?: string;
-  tabela_metricas?: string;
+  mode: ModoSaida;
+  output_table?: string;
+  quarantine_table?: string;
+  metrics_table?: string;
 }
 
 export interface DqContract {
@@ -37,18 +37,18 @@ export function serializeContract(contract: DqContract): string {
   const ordered = {
     meta: pickDefined({
       table: contract.meta.table,
-      camada: contract.meta.camada,
-      gerado_por: contract.meta.gerado_por,
-      gerado_em: contract.meta.gerado_em,
+      layer: contract.meta.layer,
+      generated_by: contract.meta.generated_by,
+      generated_at: contract.meta.generated_at,
       dqx_version: contract.meta.dqx_version,
       schema_fingerprint: contract.meta.schema_fingerprint,
     }),
     output: pickDefined({
-      modo: contract.output.modo,
-      tabela_saida: contract.output.tabela_saida,
-      tabela_quarentena:
-        contract.output.modo === "quarentena" ? contract.output.tabela_quarentena : undefined,
-      tabela_metricas: contract.output.tabela_metricas,
+      mode: contract.output.mode,
+      output_table: contract.output.output_table,
+      quarantine_table:
+        contract.output.mode === "quarantine" ? contract.output.quarantine_table : undefined,
+      metrics_table: contract.output.metrics_table,
     }),
     checks: contract.checks.map(orderCheck),
   };
@@ -75,9 +75,67 @@ export function parseContract(text: string): DqContract {
     throw new Error("Contrato sem lista de checks.");
   }
   return {
-    meta: raw.meta as ContractMeta,
-    output: raw.output ?? { modo: "anotacao" },
-    checks: raw.checks,
+    meta: migrarMeta(raw.meta as unknown as Record<string, unknown>),
+    output: migrarOutput((raw.output ?? {}) as Record<string, unknown>),
+    checks: (raw.checks as DqxCheck[]).map(migrarCheck),
+  };
+}
+
+/**
+ * Os contratos nasceram com chaves e valores em português. O YAML é artefato de
+ * repositório, lido por gente e por ferramenta fora daqui, então padronizou-se
+ * em inglês — mas os arquivos já versionados continuam sendo aceitos e migram
+ * no próximo save.
+ */
+const MODOS: Record<string, ModoSaida> = { quarentena: "quarantine", anotacao: "annotate" };
+const ORIGENS: Record<string, OrigemContrato> = {
+  ia_agente: "ai_agent",
+  ia_assistida: "ai_assisted",
+};
+const DIMENSOES: Record<string, string> = {
+  completude: "completeness",
+  validade: "validity",
+  acuracia: "accuracy",
+  unicidade: "uniqueness",
+  consistencia: "consistency",
+  atualidade: "timeliness",
+};
+
+function migrarMeta(meta: Record<string, unknown> = {}): ContractMeta {
+  const camada = (meta.layer ?? meta.camada) as Layer | undefined;
+  const origem = (meta.generated_by ?? meta.gerado_por) as string | undefined;
+  return pickDefined<ContractMeta>({
+    table: meta.table as string,
+    layer: camada === ("desconhecida" as Layer) ? "unknown" : (camada ?? "unknown"),
+    generated_by: ((origem && ORIGENS[origem]) || (origem as OrigemContrato) || "manual"),
+    generated_at: (meta.generated_at ?? meta.gerado_em ?? new Date().toISOString()) as string,
+    dqx_version: meta.dqx_version as string | undefined,
+    schema_fingerprint: meta.schema_fingerprint as string | undefined,
+  });
+}
+
+function migrarOutput(output: Record<string, unknown>): ContractOutput {
+  const modo = (output.mode ?? output.modo) as string | undefined;
+  return pickDefined<ContractOutput>({
+    mode: ((modo && MODOS[modo]) || (modo as ModoSaida) || "annotate"),
+    output_table: (output.output_table ?? output.tabela_saida) as string | undefined,
+    quarantine_table: (output.quarantine_table ?? output.tabela_quarentena) as string | undefined,
+    metrics_table: (output.metrics_table ?? output.tabela_metricas) as string | undefined,
+  });
+}
+
+function migrarCheck(check: DqxCheck): DqxCheck {
+  const meta = check.user_metadata;
+  if (!meta) {
+    return check;
+  }
+  const { dimensao, dimension, ...resto } = meta as Record<string, string>;
+  const valor = dimension ?? dimensao;
+  return {
+    ...check,
+    user_metadata: valor
+      ? { ...resto, dimension: DIMENSOES[valor] ?? valor }
+      : (resto as Record<string, string>),
   };
 }
 
@@ -123,15 +181,15 @@ export function newContract(params: {
   return {
     meta: pickDefined<ContractMeta>({
       table: params.table,
-      camada: detectLayer(tableName),
-      gerado_por: params.origem,
-      gerado_em: new Date().toISOString(),
+      layer: detectLayer(tableName),
+      generated_by: params.origem,
+      generated_at: new Date().toISOString(),
       dqx_version: params.dqxVersion,
       schema_fingerprint: params.columns ? schemaFingerprint(params.columns) : undefined,
     }),
     output: {
-      modo: params.modo ?? "anotacao",
-      tabela_saida: params.table,
+      mode: params.modo ?? "annotate",
+      output_table: params.table,
     },
     checks: params.checks,
   };

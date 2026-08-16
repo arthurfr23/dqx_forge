@@ -159,7 +159,7 @@ export const AGENT_TOOLS: ToolDefinition[] = [
               filter: { type: "string" },
               function: { type: "string", description: "nome da check function do DQX" },
               arguments: { type: "object" },
-              dimensao: { type: "string" },
+              dimension: { type: "string" },
               justificativa: { type: "string" },
             },
             required: ["criticality", "function", "arguments", "justificativa"],
@@ -180,7 +180,7 @@ export const AGENT_TOOLS: ToolDefinition[] = [
             arguments: (item.arguments as Record<string, unknown>) ?? {},
           },
           user_metadata:
-            typeof item.dimensao === "string" ? { dimensao: item.dimensao } : undefined,
+            typeof item.dimension === "string" ? { dimension: item.dimension } : undefined,
         };
         context.propostas.push({
           check,

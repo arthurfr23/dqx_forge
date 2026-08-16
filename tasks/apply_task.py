@@ -63,7 +63,7 @@ def main() -> None:
         if not checks:
             raise ValueError("Contrato sem checks.")
 
-        modo = args.mode or output.get("modo", "anotacao")
+        modo = args.mode or _modo(output)
         payload["table"] = table
         payload["modo"] = modo
 
@@ -78,11 +78,11 @@ def main() -> None:
         if getattr(status, "has_errors", False):
             raise ValueError(f"Checks inválidos: {status}")
 
-        destino = output.get("tabela_saida") or f"{table}_validado"
+        destino = _campo(output, "output_table", "tabela_saida") or f"{table}_validated"
         # Reescrever a tabela de origem mudaria o schema dela; o default anexa
         # o sufixo em vez de sobrescrever o dado bruto.
         if destino == table:
-            destino = f"{table}_validado"
+            destino = f"{table}_validated"
 
         # Saída e quarentena são artefatos derivados, recriados a cada
         # execução. Trocar o modo (quarentena <-> anotação) muda o
@@ -91,20 +91,20 @@ def main() -> None:
         overwrite = {"overwriteSchema": "true"}
 
         quarantine_config = None
-        if modo == "quarentena":
+        if modo == "quarantine":
             quarentena = (
-                output.get("tabela_quarentena") or f"{table}_quarentena"
+                _campo(output, "quarantine_table", "tabela_quarentena")
+                or f"{table}_quarantine"
             )
             quarantine_config = OutputConfig(
                 location=quarentena, mode="overwrite", options=overwrite
             )
 
         metrics_config = None
-        if output.get("tabela_metricas"):
+        metricas = _campo(output, "metrics_table", "tabela_metricas")
+        if metricas:
             # Métricas acumulam histórico: append, sem overwriteSchema.
-            metrics_config = OutputConfig(
-                location=output["tabela_metricas"], mode="append"
-            )
+            metrics_config = OutputConfig(location=metricas, mode="append")
 
         # A API de alto nível lê, aplica, divide e grava — inclusive as
         # métricas que alimentam o dashboard.
@@ -122,7 +122,7 @@ def main() -> None:
             [quarantine_config.location] if quarantine_config else []
         )
         if metrics_config:
-            payload["tabela_metricas"] = metrics_config.location
+            payload["metrics_table"] = metrics_config.location
         payload["ok"] = True
 
     except Exception as exc:
@@ -137,6 +137,17 @@ def main() -> None:
 
     if not payload["ok"]:
         raise SystemExit(payload.get("error", "apply falhou"))
+
+
+def _campo(output: dict, novo: str, antigo: str):
+    """O contrato passou a usar chaves em inglês; as antigas seguem aceitas."""
+    valor = output.get(novo)
+    return valor if valor is not None else output.get(antigo)
+
+
+def _modo(output: dict) -> str:
+    bruto = _campo(output, "mode", "modo") or "annotate"
+    return {"anotacao": "annotate", "quarentena": "quarantine"}.get(bruto, bruto)
 
 
 def _load_contract(path: str) -> dict:
@@ -160,7 +171,7 @@ def _load_contract(path: str) -> dict:
 
 
 def _build_observer(output: dict):
-    if not output.get("tabela_metricas"):
+    if not _campo(output, "metrics_table", "tabela_metricas"):
         return None
     try:
         from databricks.labs.dqx.metrics_observer import DQMetricsObserver

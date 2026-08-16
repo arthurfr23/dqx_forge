@@ -220,12 +220,12 @@ export interface Catalogo {
   msg_semModelosIde: string;
 
   // dimensões
-  dim_completude: string;
-  dim_validade: string;
-  dim_acuracia: string;
-  dim_unicidade: string;
-  dim_consistencia: string;
-  dim_atualidade: string;
+  dim_completeness: string;
+  dim_validity: string;
+  dim_accuracy: string;
+  dim_uniqueness: string;
+  dim_consistency: string;
+  dim_timeliness: string;
 
   // execução de jobs
   job_enviandoScript: string;
@@ -589,12 +589,12 @@ const ptBr: Catalogo = {
   msg_semModelosIde:
     "Nenhum modelo de linguagem disponível na IDE. Escolha um modelo do workspace em Configuração.",
 
-  dim_completude: "completude",
-  dim_validade: "validade",
-  dim_acuracia: "acurácia",
-  dim_unicidade: "unicidade",
-  dim_consistencia: "consistência",
-  dim_atualidade: "atualidade",
+  dim_completeness: "completude",
+  dim_validity: "validade",
+  dim_accuracy: "acurácia",
+  dim_uniqueness: "unicidade",
+  dim_consistency: "consistência",
+  dim_timeliness: "atualidade",
 
   job_enviandoScript: "Enviando o script para o workspace…",
   job_iniciando: "Iniciando o job serverless…",
@@ -962,12 +962,12 @@ const en: Catalogo = {
   msg_semModelosIde:
     "No language model available in the IDE. Pick a workspace model under Setup.",
 
-  dim_completude: "completeness",
-  dim_validade: "validity",
-  dim_acuracia: "accuracy",
-  dim_unicidade: "uniqueness",
-  dim_consistencia: "consistency",
-  dim_atualidade: "timeliness",
+  dim_completeness: "completeness",
+  dim_validity: "validity",
+  dim_accuracy: "accuracy",
+  dim_uniqueness: "uniqueness",
+  dim_consistency: "consistency",
+  dim_timeliness: "timeliness",
 
   job_enviandoScript: "Uploading the script to the workspace…",
   job_iniciando: "Starting the serverless job…",
@@ -1333,12 +1333,12 @@ const es: Catalogo = {
   msg_semModelosIde:
     "Ningún modelo de lenguaje disponible en el IDE. Elige un modelo del workspace en Configuración.",
 
-  dim_completude: "completitud",
-  dim_validade: "validez",
-  dim_acuracia: "exactitud",
-  dim_unicidade: "unicidad",
-  dim_consistencia: "consistencia",
-  dim_atualidade: "actualidad",
+  dim_completeness: "completitud",
+  dim_validity: "validez",
+  dim_accuracy: "exactitud",
+  dim_uniqueness: "unicidad",
+  dim_consistency: "consistencia",
+  dim_timeliness: "actualidad",
 
   job_enviandoScript: "Enviando el script al workspace…",
   job_iniciando: "Iniciando el job serverless…",

@@ -271,7 +271,7 @@ export async function runContractJob(
   const escolhido = await vscode.window.showQuickPick(
     contratos.map(({ contract }) => ({
       label: contract.meta.table,
-      description: `${contract.checks.length} checks · ${contract.output.modo}`,
+      description: `${contract.checks.length} checks · ${contract.output.mode}`,
       chave: `job_dq_${jobSlug(contract.meta.table)}`,
     })),
     { title: t().acao_executarTitulo, placeHolder: t().acao_executarPlaceholder },
